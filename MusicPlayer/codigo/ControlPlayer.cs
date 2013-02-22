@@ -94,7 +94,7 @@ namespace MusicPlayer.codigo
             actualizaItem();
         }
 
-        //al dar al siguiente
+        //al dar al goForward
         public void siguiente()
         {
             // si está en modo no cíclico y está en el último elemento parar
@@ -106,7 +106,7 @@ namespace MusicPlayer.codigo
             }
             else
             {
-                //ir al siguiente
+                //ir al goForward
                 MediaPlayer.MoveNext();
                 actualizaItem();
             }

@@ -64,6 +64,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="codigo\ControlPlayer.cs" />
+    <Compile Include="codigo\XNAFrameworkDispatcherService.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -110,6 +111,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Imagenes\appbar.transport.rew.rest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Imagenes\config.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Imagenes\Layout.png">

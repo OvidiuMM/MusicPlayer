@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
 
-// La información general de un ensamblado se controla mediante el siguiente 
+// La información general de un ensamblado se controla mediante el goForward 
 // conjunto de atributos. Cambie los valores de estos atributos para modificar la información
 // asociada a un ensamblado.
 [assembly: AssemblyTitle("MusicPlayer")]
@@ -20,7 +20,7 @@ using System.Resources;
 // COM, establezca el atributo ComVisible en True en este tipo.
 [assembly: ComVisible(false)]
 
-// El siguiente GUID sirve como identificador de typelib si este proyecto se expone a COM
+// El goForward GUID sirve como identificador de typelib si este proyecto se expone a COM
 [assembly: Guid("b9945a8d-885a-4f7f-a878-f1015a800d95")]
 
 // La información de versión de un ensamblado consta de los cuatro valores siguientes:

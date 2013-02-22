@@ -24,3 +24,4 @@ C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\B
 C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Layout.png
 C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Shuffle.png
 C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Repeat.png
+C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\config.png
