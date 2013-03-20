@@ -100,7 +100,7 @@
 
             <shell:ApplicationBar.MenuItems>
                 <shell:ApplicationBarMenuItem Text="Repeat" Click="ApplicationBarMenuItemRepeat_Click"  />
-                  <shell:ApplicationBarMenuItem Text="Shuffle"  Click="ApplicationBarMenuItemShuffle_Click" />
+                <!--  <shell:ApplicationBarMenuItem Text="Shuffle"  Click="ApplicationBarMenuItemShuffle_Click" />-->
                 <shell:ApplicationBarMenuItem Text="Stop"  Click="ApplicationBarMenuItemStop_Click"/>
                 <shell:ApplicationBarMenuItem Text="Bloq. Screen"  Click="ApplicationBarMenuItemIdle_Click"/>
             </shell:ApplicationBar.MenuItems>
