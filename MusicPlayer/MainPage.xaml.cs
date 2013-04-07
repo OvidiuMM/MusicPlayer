@@ -27,20 +27,23 @@ namespace MusicPlayer
     {
         //the songs that may be played (listbox and MPlayer)
         private SongCollection songCollection;
+
         // the media library Object
         private MediaLibrary library;
+
         // the play lists collection Object
         private PlaylistCollection playlists;
+        
         // the artists lists collection Object
         private ArtistCollection artistlists = null;
+        
         // the albums lists collection Object
         private AlbumCollection albumelists = null;
+        
         //songsCollection source : Total/listas/albumes/artistas
         private int fuente = 0;
-
-        private int songPosition = 0;
-
-        private List<string> shuflledList;
+             
+        private ControlPlayer cp;
 
         //application bars options
         private string[] AppBars = new string[]
@@ -62,7 +65,7 @@ namespace MusicPlayer
         {
             InitializeComponent();
 
-            //the phone can go to sleep
+            //the phone can't go to sleep
             PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled;
 
             // Establecer el contexto de datos del control ListBox control en los datos de ejemplo
@@ -89,13 +92,13 @@ namespace MusicPlayer
             library = new MediaLibrary();
             //store the songs
             songCollection = library.Songs;
-
+            cp = new ControlPlayer(songCollection.Count);
             //mediaplayer listeners
             MediaPlayer.ActiveSongChanged += new EventHandler<EventArgs>(MediaPlayer_ActiveSongChanged);
             MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
 
             //update the song list and the song meta data
-            fillTheList();
+          
             updateListForCategory(0);
             updateTheSongsList();
             UpdateCurrentSongInformation();
@@ -180,21 +183,10 @@ namespace MusicPlayer
 
         private void ApplicationBarMenuItemShuffle_Click(object sender, EventArgs e)
         {
-            MediaPlayer.IsShuffled = !(MediaPlayer.IsShuffled);
-            if (MediaPlayer.IsShuffled)
-                fillTheList();
-            
+            cp.shuffled = true;
         }
 
-        private void fillTheList()
-        {
-            shuflledList = new List<string>();
-            for (int i = 0; i < MediaPlayer.Queue.Count; i++)
-            {
-                MediaPlayer.MoveNext();
-                shuflledList.Add(MediaPlayer.Queue.ActiveSong.Name);
-            }
-        }
+      
 
         private void ApplicationBarMenuItemStop_Click(object sender, EventArgs e)
         {
@@ -212,23 +204,23 @@ namespace MusicPlayer
         // al darle al botón atrás
         public void goBack()
         {
+          
             // si está en modo no cíclico y está en el primer elemento parar
-            if (!MediaPlayer.IsRepeating && trackListBox.SelectedIndex == 0)
+            if (!MediaPlayer.IsRepeating && cp.position == 0)
             {
                 MediaPlayer.Stop();
-                songPosition = 0;                
+                
             }
             else
             {
+                cp.atras();
                 //indicar al player que pase al elemento anerior
                 MediaPlayer.MovePrevious();
                 //actualizar los campos de información, lista y textos
-                
-          
-                songPosition--;
-
-                updateSongsListBoxItem();
+                trackListBox.SelectedIndex = cp.position;          
             }
+            //actualizar datos canción
+            UpdateCurrentSongInformation();
         }
 
 
@@ -240,7 +232,7 @@ namespace MusicPlayer
             {
                 //pausar media player
                 MediaPlayer.Pause();
-                songPosition = trackListBox.SelectedIndex;
+                
             }
 
             //si está en pausa
@@ -250,7 +242,7 @@ namespace MusicPlayer
                     //reproducir desde la última posición
                     MediaPlayer.Resume();
                 else
-                    MediaPlayer.Play(songCollection, songPosition);                
+                    MediaPlayer.Play(songCollection, cp.position);                
              
                 
             }
@@ -258,37 +250,31 @@ namespace MusicPlayer
             else if (MediaPlayer.State == MediaState.Stopped)
             {
                 //reproducir la lista de canciones
-
-                if (songPosition < 0)
-                 
-                    songPosition = 0;
-                else
-                 
-                MediaPlayer.Play(songCollection, trackListBox.SelectedIndex);
+                MediaPlayer.Play(songCollection, cp.position);
             }
             //actualizar datos canción
-            updateSongsListBoxItem();
+            UpdateCurrentSongInformation();
         }
 
         //al dar al goForward
         public void goForward()
         {
-            // si está en modo no cíclico y está en el último elemento parar
-            if (!MediaPlayer.IsRepeating && trackListBox.SelectedIndex == songCollection.Count - 1)
+           
+            // si está en modo no cíclico y está en el primer elemento parar
+            if (!MediaPlayer.IsRepeating && cp.position == cp.longitud)
             {
                 MediaPlayer.Stop();
-                //cambiar el item al primero de la lista
-              
-                songPosition = 0;
+
             }
             else
             {
-                //ir al goForward
+                cp.siguiente();
+                //indicar al player que pase al elemento anerior
                 MediaPlayer.MoveNext();
-                        
-                songPosition++;
-
+                //actualizar los campos de información, lista y textos
+                trackListBox.SelectedIndex = cp.position;
             }
+            //actualizar datos canción
             updateSongsListBoxItem();
         }
 
@@ -296,8 +282,10 @@ namespace MusicPlayer
         {
             songListBox.ItemsSource = "";
             this.fuente = 0;
-            changeSongsListOrigin();
+       
             aTextBlock.Text = "All the songs";
+            aTextBlock.Visibility = System.Windows.Visibility.Visible;  
+            changeSongsListOrigin();
         }
 
         //change the play pause button
@@ -319,12 +307,12 @@ namespace MusicPlayer
 
         public void songChangedFromMPlayer()
         {
-            updateSongsListBoxItem();
+            //updateSongsListBoxItem();
          
         }
 
 
-        //actualizar el item seleccionado a la posición actual del mediapLayer
+   /*     //actualizar el item seleccionado a la posición actual del mediapLayer
         public void updateSongsListBoxItem()
         {
            
@@ -337,15 +325,34 @@ namespace MusicPlayer
             //actualizar los campos de texto
             UpdateCurrentSongInformation();
         }
+*/
+        public void updateSongsListBoxItem()
+        {
+
+            if (MediaPlayer.Queue.ActiveSongIndex != -1)
+            {
+                cp.position = MediaPlayer.Queue.ActiveSongIndex;
+                if(trackListBox.SelectedIndex!=cp.position)
+                trackListBox.SelectedIndex = cp.position;
+                //actualizar los campos de texto
+                UpdateCurrentSongInformation();
+            }
+        }
 
         //cambiar la canción
         public void updateMPlayerSongFromList()
         {
-                        MediaPlayer.Queue.ActiveSongIndex = trackListBox.SelectedIndex;                        
-                  
-                songPosition = trackListBox.SelectedIndex;
-            
-            UpdateCurrentSongInformation();
+            try
+            {
+                cp.position = trackListBox.SelectedIndex;
+                if (MediaPlayer.Queue.ActiveSongIndex != cp.position)
+                    MediaPlayer.Queue.ActiveSongIndex = cp.position;
+                UpdateCurrentSongInformation();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString() + " -->A updateMPlayerSongFromList method");
+            }
         }
 
         //updates the song list from the mediaLibrary
@@ -355,11 +362,12 @@ namespace MusicPlayer
             {
                 MediaPlayer.Play(songCollection);
                 trackListBox.ItemsSource = songCollection;
-              
+                cp.longitud = songCollection.Count;
+                UpdateCurrentSongInformation();
             }
-            catch //(Exception ex)
+            catch (Exception ex)
             {
-                //  MessageBox.Show(ex.Message.ToString()+" ******tamaño collection:"+songCollection.Count+" ******itemsSource:"+ trackListBox.Items.Count ,  "Error!", MessageBoxButton.OK);
+                MessageBox.Show(ex.Message.ToString() + " -->updateTheSongsList method ");
             }
     
 
@@ -367,7 +375,7 @@ namespace MusicPlayer
         //al cambiar a otra lista
         public void changeSongsListOrigin()
         {
-            aTextBlock.Text = "";
+            aTextBlock.Visibility = System.Windows.Visibility.Collapsed;
             int index = songListBox.Items.Count;
             if (songListBox.Items.Count != 0 & songListBox.SelectedIndex == -1)
                 songListBox.SelectedIndex = 0;
@@ -410,7 +418,7 @@ namespace MusicPlayer
                
                 if (trackListBox.Items.Count > 0)
                 {
-                    songPosition = 0;
+                    cp.position = 0;
                     UpdateCurrentSongInformation();
                 }                  
             }
@@ -461,19 +469,18 @@ namespace MusicPlayer
 
         //update the actual song meta data
         private void UpdateCurrentSongInformation()
-        {
-            
+        {            
             Song song;
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
-
                 song = MediaPlayer.Queue.ActiveSong;
             else
-                song = songCollection.ElementAt(songPosition);
+                song = songCollection.ElementAt(cp.position);
             try
             {
                 titleTextBlock.Text = song.Name + song.Artist.Name + song.Album.Name +
                     song.Duration.Hours.ToString() + ":" + song.Duration.Minutes.ToString() + ":" + song.Duration.Seconds.ToString();
-                trackListBox.SelectedIndex = songPosition;
+                if (trackListBox.SelectedIndex != cp.position)
+                    trackListBox.SelectedIndex = cp.position;
                 
             }
             catch

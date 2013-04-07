@@ -11,254 +11,146 @@ using System.Windows.Shapes;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.ObjectModel;
-
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MusicPlayer.codigo
 {
     public class ControlPlayer
     {
-        private SongCollection songCollection;
-        private MediaLibrary library;
-        private Playlist songList = null;
-        private PlaylistCollection playlists;
+        private static Random rand = new Random();
 
-        MainPage
-            m = (MainPage)Application.Current.RootVisual;
-        public ControlPlayer()
+        private bool _repeat;
+        public bool repeat
         {
-            
-            //establecer a false estos valores
-            MediaPlayer.IsRepeating = false;
-            MediaPlayer.IsShuffled = false;
-
-            //recover the media library songs as the initial song list
-            library = new MediaLibrary();
-            //store the songs
-            songCollection = library.Songs;
-
-
-
-            //update the song list and the song meta data
-            UpdateSongList();
-            UpdateList();
-            UpdateCurrentSongInformation();
+            //set the person name
+            set { this._repeat = value; }
+            //get the person name 
+            get { return this._repeat; }
         }
+
+        private bool _shuffled;
+        public bool shuffled
+        {
+            //set the person name
+            set { this._shuffled = value; }
+            //get the person name 
+            get { return this._shuffled; }
+        }
+
+        private int _position;
+        public int position
+        {
+            //set the person name
+            set {
+                if (value < this._longitud)
+                {
+                    this._position = value;
+                  //  MessageBox.Show("ojo: " + value, "long"+this.longitud, MessageBoxButton.OK);
+                }
+                else
+                    MessageBox.Show("You are tring to set a position that is grater than the list long. ->" + value + "->" + this.longitud);
+            }
+            //get the person name 
+            get { return this._position; }
+        }
+
+
+        private int _longitud;
+        public int longitud 
+        {
+            //set the person name
+            set { this._longitud  = value;
+            this._position = 0;
+                }
+            //get the person name 
+            get { return this._longitud ; }
+        }
+
+        private List<int> anteriores;
+              	
+        public ControlPlayer(int listLong)
+        {
+            this.initialize(listLong);           
+        }
+
+        public void initialize(int listLong)
+        {
+            this.longitud = listLong-1;
+            this.repeat = false;
+            this.shuffled = false;
+            this.position = 0;
+            this.anteriores= new List<int>();
+        }
+
         // al darle al botón atrás
         public void atras()
-        {
-            // si está en modo no cíclico y está en el primer elemento parar
-            if (!MediaPlayer.IsRepeating && m.trackListBox.SelectedIndex == 0)
+        {           
+            if (this.shuffled)
             {
-                MediaPlayer.Stop();
+                if (this.anteriores.Count > 0)
+                {
+                    this.position = this.anteriores[this.anteriores.Count - 1];
+                    this.anteriores.RemoveAt(this.anteriores.Count - 1);
+                }
+                else
+                    this.siguiente();
             }
-            else
-            {
-                //indicar al player que pase al elemento anerior
-                MediaPlayer.MovePrevious();
-                //actualizar los campos de información, lista y textos
-                actualizaItem();
+            else{
+                if (this.repeat && this.position == 0)
+                {
+                    // si está en modo no cíclico y está en el primer elemento parar
+                }
+                else
+                {
+                    int sig = this.position - 1;
+                    this.position = mod(sig , this._longitud);
+                  
+                }
             }
-
-        }
-
-
-        // al pausar/reproducir
-        public void pausaPlay()
-        {
-            //si se está reproduciendo
-            if (MediaPlayer.State == MediaState.Playing)
-            {
-                //pausar media player
-                MediaPlayer.Pause();
-            }
-
-            //si está en pausa
-            else if (MediaPlayer.State == MediaState.Paused)
-            {
-                //reproducir desde la última posición
-                MediaPlayer.Resume();
-
-                /*¿?
-                 * if (MediaPlayer.Queue.ActiveSongIndex != trackListBox.SelectedIndex)
-                    MediaPlayer.Queue.ActiveSongIndex = trackListBox.SelectedIndex;*/
-            }
-            //si está parado
-            else if (MediaPlayer.State == MediaState.Stopped)
-            {
-                //reproducir la lista de canciones
-                MediaPlayer.Play(songCollection);
-
-            }
-            //actualizar datos canción
-            actualizaItem();
         }
 
         //al dar al goForward
         public void siguiente()
         {
-            // si está en modo no cíclico y está en el último elemento parar
-            if (!MediaPlayer.IsRepeating && m.trackListBox.SelectedIndex == songCollection.Count - 1)
+            if (this.shuffled)
             {
-                MediaPlayer.Stop();
-                //cambiar el item al primero de la lista
-                m.trackListBox.SelectedIndex = 0;
-            }
-            else
-            {
-                //ir al goForward
-                MediaPlayer.MoveNext();
-                actualizaItem();
-            }
-        }
-
-        /*private void PanoramaItem_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (m.trackListBox.SelectedIndex == 0)
-                m.trackListBox.SelectedIndex = 1;
-        }*/
-
-    
-
-        //al cambiar a otra lista
-        public void cambioLista()
-        {
-            //obtiene la lista con las canciones de la libreria
-            songList = playlists.ElementAt(m.songListBox.SelectedIndex);
-            //cambia la lista
-            songCollection = songList.Songs;
-            //cambia color del texto de todos 
-            SolidColorBrush c = (SolidColorBrush)App.Current.Resources["PhoneAccentBrush"];
-            m.aTextBlock.Foreground = c;
-            //actualiza la lista de canciones
-            UpdateSongList();
-            actualizaItem();
-        }
-
-        public void cambioAListaTotal()
-        {
-            //pone a null el nombre de la lista
-            songList = null;
-            //cambia la lista de reproduccion
-            songCollection = library.Songs;
-            SolidColorBrush c = (SolidColorBrush)App.Current.Resources["PhoneBackgroundColor"];
-            m.aTextBlock.Foreground = c;
-            //actualiza la lista de canciones
-            UpdateSongList();
-            actualizaItem();
-        }
-
-        //change the play pause button
-        public void cambioEstadoPlayer()
-        {
-            switch (MediaPlayer.State)
-            {
-                case MediaState.Stopped:
-                    m.pausePlayImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/appbar.transport.play.rest.png");
-                    break;
-                case MediaState.Playing:
-                    m.pausePlayImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/appbar.transport.pause.rest.png");
-                    break;
-                case MediaState.Paused:
-                    m.pausePlayImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/appbar.transport.play.rest.png");
-                    break;
-            }
-        }
-
-        public void cancionCambiadaPlayer()
-        {
-            actualizaItem();
-            //  m.trackListBox.SelectedIndex = MediaPlayer.Queue.ActiveSongIndex;
-
-        }
-        //actualizar el item seleccionado a la posición actual del mediapLayer
-        public void actualizaItem()
-        {
-            m.trackListBox.SelectedIndex = MediaPlayer.Queue.ActiveSongIndex;
-            //actualizar los campos de texto
-            UpdateCurrentSongInformation();
-        }
-
-        //cambiar la canción
-        public void actualizaCancion()
-        {
-            //la nueva canción tiene que estar en la misma posición que en la lista
-            MediaPlayer.Queue.ActiveSongIndex = m.trackListBox.SelectedIndex;
-            UpdateCurrentSongInformation();
-        }
-
-        //updates the song list from the mediaLibrary
-        private void UpdateSongList()
-        {
-            try
-            {
-                m.trackListBox.ItemsSource = songCollection;
-                MediaPlayer.Play(songCollection);
-                m.trackListBox.IsSynchronizedWithCurrentItem = true;
-            }
-            catch
-            {
-            }
-        }
-
-        //updates the lists from the mediaLibrary
-        private void UpdateList()
-        {
-
-            playlists = library.Playlists;
-            m.songListBox.ItemsSource = playlists;
-            if (!(m.songListBox.Items.Count > 0))
-                m.aTextBlock.Text = "No playlists available";
-            cambioAListaTotal();
-        }
-
-        //update the actual song meta data
-        private void UpdateCurrentSongInformation()
-        {
-            Song song = MediaPlayer.Queue.ActiveSong;
-            try
-            {
-                m.titleTextBlock.Text = song.Name + song.Artist.Name + song.Album.Name +
-                    song.Duration.Hours.ToString() + ":" + song.Duration.Minutes.ToString() + ":" + song.Duration.Seconds.ToString();
-            }
-            catch
-            {
-            }
-        }
-        /*
-            //update the actual song meta data
-        void UpdateCurrentSongInformation()
-        {
-            Song song;
-            if (songCollection.Contains(MediaPlayer.Queue.ActiveSong) &&
-                (trackListBox.SelectedIndex == MediaPlayer.Queue.ActiveSongIndex))
-                if (MediaPlayer.State == MediaState.Playing || MediaPlayer.State == MediaState.Paused)
+                this.anteriores.Add(this.position);
+                int siguiente = rand.Next(0, this._longitud);
+                int all = 0;
+                while (siguiente == this.position && this.anteriores.IndexOf(siguiente) < 0&& all<=this.longitud)
                 {
-                    song = MediaPlayer.Queue.ActiveSong;
+                    siguiente = rand.Next(0, this._longitud);
+                    all++;
+                }
+                if (all > this.longitud)
+                {
+                    this.position = 0;
+                    this.anteriores.Clear();
                 }
                 else
                 {
-                    int position = trackListBox.SelectedIndex;
-
-                    if (position < songCollection.Count && position >= 0)
-                        song = songCollection[position];
-                    else
-                        song = songCollection[0];
+                    this.position = siguiente;
                 }
+            }
+
             else
-                song = songCollection[0];
-
-            try
             {
-                titleTextBlock.Text = song.Name;
-                artistTextBlock.Text = song.Artist.Name;
-                albumTextBlock.Text = song.Album.Name;
-                durationTextBlock.Text = song.Duration.Hours.ToString()+":"+song.Duration.Minutes.ToString()+":"+ song.Duration.Seconds.ToString();
-            }
-            catch
-            {
-            }
-        }*/
+                if (this.repeat && this.position == this._longitud)
+                {
+                    // si está en modo no cíclico y está en el primer elemento parar
+                }
 
+                else
+                {
+                    int sig=this.position+1;
+                    this.position = mod(sig, this._longitud);
+                }
+            }
+        }
+        public static int mod(int a, int n)
+        {
+            return a - (int)Math.Floor((double)a / n) * n;
+        }
     }
 }
