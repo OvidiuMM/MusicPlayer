@@ -19,7 +19,7 @@ namespace MusicPlayer.codigo
     public class ControlPlayer
     {
         private static Random rand = new Random();
-
+        
         private bool _repeat;
         public bool repeat
         {
@@ -81,6 +81,7 @@ namespace MusicPlayer.codigo
             this.shuffled = false;
             this.position = 0;
             this.anteriores= new List<int>();
+
         }
 
         // al darle al botón atrás

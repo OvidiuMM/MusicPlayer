@@ -33,9 +33,7 @@ D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\B
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.transport.play.rest.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.transport.rew.rest.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\config.png
-D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Layout.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\logo.png
-D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Redo.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Repeat.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\Shuffle.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\stopButton.png
@@ -52,3 +50,4 @@ D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\o
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\MusicPlayer.dll
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\MusicPlayer.pdb
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\XapCacheFile.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\screenOn.png

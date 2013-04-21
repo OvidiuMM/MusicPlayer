@@ -20,9 +20,12 @@ using System.IO.IsolatedStorage;
 using System.Windows.Resources;
 using System.IO;
 using MusicPlayer.codigo;
+using System.Threading;
+using System.ComponentModel;
 
 namespace MusicPlayer
 {
+
     public partial class MainPage : PhoneApplicationPage
     {
         //the songs that may be played (listbox and MPlayer)
@@ -42,8 +45,10 @@ namespace MusicPlayer
         
         //songsCollection source : Total/listas/albumes/artistas
         private int fuente = 0;
-             
+
         private ControlPlayer cp;
+
+        private BackgroundWorker worker = new BackgroundWorker();
 
         //application bars options
         private string[] AppBars = new string[]
@@ -54,10 +59,10 @@ namespace MusicPlayer
 
         //configuration options
         private string[] listSource = new string[] { 
-            "Todo",
-            "Listas",
-            "Albumes",
-            "Artistas"          
+            "all",
+            "play Lists",
+            "artists",
+            "albums"
         };
 
         // Constructor
@@ -92,21 +97,35 @@ namespace MusicPlayer
             library = new MediaLibrary();
             //store the songs
             songCollection = library.Songs;
-            cp = new ControlPlayer(songCollection.Count);
-            //mediaplayer listeners
-            MediaPlayer.ActiveSongChanged += new EventHandler<EventArgs>(MediaPlayer_ActiveSongChanged);
-            MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
-
-            //update the song list and the song meta data
-          
-            updateListForCategory(0);
-            updateTheSongsList();
-            UpdateCurrentSongInformation();
-            MediaPlayer.Stop();
-            if (!App.ViewModel.IsDataLoaded)
+            if (songCollection.Count > 0)
             {
-                App.ViewModel.LoadData();
+                cp = new ControlPlayer(songCollection.Count);
+                //mediaplayer listeners
+                MediaPlayer.ActiveSongChanged += new EventHandler<EventArgs>(MediaPlayer_ActiveSongChanged);
+                MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
+
+                //update the song list and the song meta data
+                updateListForCategory(0);
+             
+                MediaPlayer.Stop();
+                cp.position = 0;
+
+                //backgroundworker event
+                worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
             }
+            else
+            {
+                MessageBox.Show("There is no song to be played");
+                ApplicationBar.IsMenuEnabled = false;
+                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["listas"];
+                ApplicationBar.IsMenuEnabled = false;
+            }
+                if (!App.ViewModel.IsDataLoaded)
+                {
+                    App.ViewModel.LoadData();
+                }
+      
         }
 
         //change the applicationBar for each panorama view
@@ -159,7 +178,7 @@ namespace MusicPlayer
         private void ApplicationBarMenuItemArtistas_Click(object sender, EventArgs e)
         {
             updateListForCategory(2);
-        }
+            }
 
         private void ApplicationBarMenuItemAlbumes_Click(object sender, EventArgs e)
         {
@@ -179,11 +198,29 @@ namespace MusicPlayer
         private void ApplicationBarMenuItemRepeat_Click(object sender, EventArgs e)
         {
             MediaPlayer.IsRepeating = !(MediaPlayer.IsRepeating);
-        }
+
+            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
+            menu.Text = (menu.Text.Equals("repeat")) ? "don't repeat" : "repeat";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/Repeat.png");
+            
+            openCanvas();
+            worker.RunWorkerAsync();
+       
+
+    }
+       
+       
 
         private void ApplicationBarMenuItemShuffle_Click(object sender, EventArgs e)
         {
-            cp.shuffled = true;
+            cp.shuffled = !(cp.shuffled);
+
+            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
+            menu.Text = (menu.Text.Equals("shuffle")) ? "don't shuffle" : "shuffle";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/Shuffle.png");
+            openCanvas();
+            worker.RunWorkerAsync();
+             
         }
 
       
@@ -191,6 +228,13 @@ namespace MusicPlayer
         private void ApplicationBarMenuItemStop_Click(object sender, EventArgs e)
         {
             MediaPlayer.Stop();
+
+            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
+            menu.Text = (menu.Text.Equals("stop")) ? "don't stop" : "stop";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/stopButton.png");
+            openCanvas();
+            worker.RunWorkerAsync();
+            
         }
 
         private void ApplicationBarMenuItemIdle_Click(object sender, EventArgs e)
@@ -199,17 +243,61 @@ namespace MusicPlayer
                 PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled;
             else
                 PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
+
+            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
+            menu.Text = (menu.Text.Equals("bloq. Screen")) ? "don't bloq" : "bloq";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/screenOn.png");
+            openCanvas();
+            worker.RunWorkerAsync();
+         
         }
-                
+
+        //Notification thread and process
+        void worker_RunWorkerCompleted(object sender,
+                              RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                // Happens on the UI thread so its ok
+                MessageBox.Show("Error occurred...");
+            }
+            else
+                hiddeCanvas();
+        }
+
+        //thread background worker
+        void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // for (var x = 0; x < 5; ++x)
+            //   {
+            // Do Something
+            Thread.Sleep(1000);
+            //    }        
+        }
+
+        private void openCanvas()
+        {
+            ApplicationBar.IsMenuEnabled = false;
+            actionCanvas.Visibility = System.Windows.Visibility.Visible;
+            backgroundCanvas.Visibility = System.Windows.Visibility.Visible;
+
+        }
+
+        private void hiddeCanvas()
+        {
+            actionCanvas.Visibility = System.Windows.Visibility.Collapsed;
+            backgroundCanvas.Visibility = System.Windows.Visibility.Collapsed;
+            ApplicationBar.IsMenuEnabled = true;
+        }
+
         // al darle al botón atrás
         public void goBack()
         {
-          
+          try{
             // si está en modo no cíclico y está en el primer elemento parar
             if (!MediaPlayer.IsRepeating && cp.position == 0)
             {
                 MediaPlayer.Stop();
-                
             }
             else
             {
@@ -221,12 +309,18 @@ namespace MusicPlayer
             }
             //actualizar datos canción
             UpdateCurrentSongInformation();
+          }
+          catch (Exception ex)
+          {
+              MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+          }
         }
 
 
         // al pausar/reproducir
         public void pausePlay()
         {
+            try{
             //si se está reproduciendo
             if (MediaPlayer.State == MediaState.Playing)
             {
@@ -254,12 +348,17 @@ namespace MusicPlayer
             }
             //actualizar datos canción
             UpdateCurrentSongInformation();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+            }
         }
 
         //al dar al goForward
         public void goForward()
         {
-           
+           try{
             // si está en modo no cíclico y está en el primer elemento parar
             if (!MediaPlayer.IsRepeating && cp.position == cp.longitud)
             {
@@ -276,16 +375,27 @@ namespace MusicPlayer
             }
             //actualizar datos canción
             updateSongsListBoxItem();
+           }
+           catch (Exception ex)
+           {
+               MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+           }
         }
 
         public void changeToAllSongsList()
         {
+            try{
             songListBox.ItemsSource = "";
             this.fuente = 0;
        
             aTextBlock.Text = "All the songs";
             aTextBlock.Visibility = System.Windows.Visibility.Visible;  
             changeSongsListOrigin();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+            }
         }
 
         //change the play pause button
@@ -311,24 +421,10 @@ namespace MusicPlayer
          
         }
 
-
-   /*     //actualizar el item seleccionado a la posición actual del mediapLayer
         public void updateSongsListBoxItem()
         {
-           
-                if (MediaPlayer.Queue.ActiveSongIndex != -1)
-                  
-                    songPosition= MediaPlayer.Queue.ActiveSongIndex;
-                else
-                    trackListBox.SelectedIndex = songPosition;
-         
-            //actualizar los campos de texto
-            UpdateCurrentSongInformation();
-        }
-*/
-        public void updateSongsListBoxItem()
-        {
-
+        try
+            {
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
             {
                 cp.position = MediaPlayer.Queue.ActiveSongIndex;
@@ -337,6 +433,11 @@ namespace MusicPlayer
                 //actualizar los campos de texto
                 UpdateCurrentSongInformation();
             }
+            }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+        }
         }
 
         //cambiar la canción
@@ -344,7 +445,10 @@ namespace MusicPlayer
         {
             try
             {
-                cp.position = trackListBox.SelectedIndex;
+                if (trackListBox.SelectedIndex > -1)
+                    cp.position = trackListBox.SelectedIndex;
+                else
+                    cp.position = 0;
                 if (MediaPlayer.Queue.ActiveSongIndex != cp.position)
                     MediaPlayer.Queue.ActiveSongIndex = cp.position;
                 UpdateCurrentSongInformation();
@@ -361,6 +465,7 @@ namespace MusicPlayer
             try
             {
                 MediaPlayer.Play(songCollection);
+                MediaPlayer.Stop();
                 trackListBox.ItemsSource = songCollection;
                 cp.longitud = songCollection.Count;
                 UpdateCurrentSongInformation();
@@ -375,8 +480,7 @@ namespace MusicPlayer
         //al cambiar a otra lista
         public void changeSongsListOrigin()
         {
-            aTextBlock.Visibility = System.Windows.Visibility.Collapsed;
-            int index = songListBox.Items.Count;
+             int index = songListBox.Items.Count;
             if (songListBox.Items.Count != 0 & songListBox.SelectedIndex == -1)
                 songListBox.SelectedIndex = 0;
             string nombre = "";
@@ -435,21 +539,21 @@ namespace MusicPlayer
                     songListBox.ItemsSource = playlists;
                     artistlists = null;
                     albumelists = null;
-
+                    aTextBlock.Text = "play lists:";
                     break;
                 case 2:
                     artistlists = library.Artists;
                     songListBox.ItemsSource = artistlists;
                     playlists = null;
                     albumelists = null;
-
+                    aTextBlock.Text = "artists:";
                     break;
                 case 3:
                     albumelists = library.Albums;
                     songListBox.ItemsSource = albumelists;
                     playlists = null;
                     artistlists = null;
-
+                    aTextBlock.Text = "albums";
                     break;
                 default:
                     playlists = null;
@@ -469,22 +573,24 @@ namespace MusicPlayer
 
         //update the actual song meta data
         private void UpdateCurrentSongInformation()
-        {            
+        {    
+            try
+            {        
             Song song;
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
                 song = MediaPlayer.Queue.ActiveSong;
             else
                 song = songCollection.ElementAt(cp.position);
-            try
-            {
+       
                 titleTextBlock.Text = song.Name + song.Artist.Name + song.Album.Name +
                     song.Duration.Hours.ToString() + ":" + song.Duration.Minutes.ToString() + ":" + song.Duration.Seconds.ToString();
                 if (trackListBox.SelectedIndex != cp.position)
                     trackListBox.SelectedIndex = cp.position;
                 
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message.ToString() + " -->UpdateCurrentSongInformation &" + cp.position);
             }
         }
 

@@ -99,20 +99,20 @@
                           IsVisible="True">
 
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="Repeat" Click="ApplicationBarMenuItemRepeat_Click"  />
-               <shell:ApplicationBarMenuItem Text="Shuffle"  Click="ApplicationBarMenuItemShuffle_Click" />
-                <shell:ApplicationBarMenuItem Text="Stop"  Click="ApplicationBarMenuItemStop_Click"/>
-                <shell:ApplicationBarMenuItem Text="Bloq. Screen"  Click="ApplicationBarMenuItemIdle_Click"/>
+                <shell:ApplicationBarMenuItem Text="repeat" Click="ApplicationBarMenuItemRepeat_Click"  />
+               <shell:ApplicationBarMenuItem Text="shuffle"  Click="ApplicationBarMenuItemShuffle_Click" />
+                <shell:ApplicationBarMenuItem Text="stop"  Click="ApplicationBarMenuItemStop_Click"/>
+                <shell:ApplicationBarMenuItem Text="bloq. Screen"  Click="ApplicationBarMenuItemIdle_Click"/>
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
         <shell:ApplicationBar x:Key="listas"
                           IsMenuEnabled="True"
                           IsVisible="True">
             <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="Todo" Click="ApplicationBarMenuItemTodo_Click"/>
-                <shell:ApplicationBarMenuItem Text="Listas" Click="ApplicationBarMenuItemListas_Click"/>
-                <shell:ApplicationBarMenuItem Text="Artistas" Click="ApplicationBarMenuItemArtistas_Click"  />
-                <shell:ApplicationBarMenuItem Text="Albumes" Click="ApplicationBarMenuItemAlbumes_Click"/>
+                <shell:ApplicationBarMenuItem Text="all" Click="ApplicationBarMenuItemTodo_Click"/>
+                <shell:ApplicationBarMenuItem Text="play Lists" Click="ApplicationBarMenuItemListas_Click"/>
+                <shell:ApplicationBarMenuItem Text="artists" Click="ApplicationBarMenuItemArtistas_Click"  />
+                <shell:ApplicationBarMenuItem Text="albums" Click="ApplicationBarMenuItemAlbumes_Click"/>
 
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
@@ -159,13 +159,19 @@
                             Click="backButton_Click">
                                 <Image Source="Imagenes/appbar.transport.rew.rest.png"  Width="100" Height="50" />
                             </Button>
+                            <Canvas  Name="backgroundCanvas" RenderTransformOrigin="2.08,2.4" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Canvas.ZIndex="99" Background="{StaticResource PhoneBackgroundBrush}" Opacity="0.7" Height="1000" Width="1000" Visibility="Collapsed" />
 
+                            <Canvas Name="actionCanvas" Height="100" RenderTransformOrigin="2.08,2.4" Width="100" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" Grid.Column="1" Canvas.ZIndex="100" Background="{StaticResource PhoneAccentBrush}" Opacity="0.9" Visibility="Collapsed">
+                                <Image Name="canvasImage" Height="100" Width="100"/>
+                               <!-- <TextBlock Name="canvasTextBlock"  Canvas.Top="10" Canvas.Left="10" TextWrapping="Wrap" Text="You" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" FontSize="36" Margin="1"/>                                -->
+                            </Canvas>
+                           
                             <Button Name="pausePlayButton"                    
                             Grid.Column="1"   
                               Grid.Row="1"
                                     Style="{StaticResource AndreasStyle}"
                             Click="pausePlayButton_Click">
-                                <Image Name="pausePlayImage" Source="Imagenes/appbar.transport.play.rest.png" Width="100" Height="50" />
+                                <Image Name="pausePlayImage" Source="Imagenes/appbar.transport.play.rest.png" Width="100" Height="50"/>
                             </Button>
 
                             <Button Name="forwardButton"                    
@@ -190,7 +196,14 @@
                                     <RowDefinition Height="125*"/>
 
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" HorizontalAlignment="Stretch" Margin="0" Name="titleTextBlock" Text="title" VerticalAlignment="Stretch"   Style="{StaticResource PhoneTextExtraLargeStyle}"  Foreground="{StaticResource PhoneAccentBrush}" TextWrapping="Wrap" />
+                                <UserControl>
+                                   
+                                        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" Width="{Binding ActualWidth, ElementName=userControl, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=userControl, Mode=OneWay}">
+                                        <TextBlock Name="titleTextBlock" TextWrapping="Wrap" Text="Your song library is empty"   Style="{StaticResource PhoneTextExtraLargeStyle}"  Foreground="{StaticResource PhoneAccentBrush}"/>
+                                        </ScrollViewer>
+                                   
+                                </UserControl>
+                           
                             </Grid>
                         </Grid>
                     </ScrollViewer>
@@ -207,7 +220,7 @@
 
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="50"/>
+                        <RowDefinition Height="75"/>
                         <RowDefinition Height="125*"/>
                     </Grid.RowDefinitions>
                    
@@ -222,7 +235,7 @@
 
                         </ListBox>
                    
-                    <TextBlock Grid.Row="0"  HorizontalAlignment="Stretch" Name="aTextBlock" Text="Todo" VerticalAlignment="Stretch" FontSize="40"   Foreground="{StaticResource PhoneAccentBrush}" Tap="aTextBlock_Tap" Visibility="Collapsed"/>
+                    <TextBlock Grid.Row="0"  HorizontalAlignment="Stretch" Name="aTextBlock" Text="Todo" VerticalAlignment="Stretch" FontSize="60"   Foreground="{StaticResource PhoneAccentBrush}" Tap="aTextBlock_Tap" Visibility="Collapsed"/>
 
                 </Grid>
 
