@@ -116,14 +116,17 @@ namespace MusicPlayer.codigo
         {
             if (this.shuffled)
             {
-                this.anteriores.Add(this.position);
+               
                 int siguiente = rand.Next(0, this._longitud);
                 int all = 0;
-                while (siguiente == this.position && this.anteriores.IndexOf(siguiente) < 0&& all<=this.longitud)
+                if(this.anteriores.IndexOf(siguiente) >= 0)
+                    while (this.anteriores.IndexOf(siguiente) >=0 && all <= this.longitud)
                 {
                     siguiente = rand.Next(0, this._longitud);
-                    all++;
+                    if (this.anteriores.IndexOf(siguiente) >=0)
+                            all++;
                 }
+                                
                 if (all > this.longitud)
                 {
                     this.position = 0;
@@ -133,6 +136,7 @@ namespace MusicPlayer.codigo
                 {
                     this.position = siguiente;
                 }
+                this.anteriores.Add(this.position);
             }
 
             else
@@ -149,6 +153,7 @@ namespace MusicPlayer.codigo
                 }
             }
         }
+     
         public static int mod(int a, int n)
         {
             return a - (int)Math.Floor((double)a / n) * n;

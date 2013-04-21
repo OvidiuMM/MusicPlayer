@@ -27,7 +27,6 @@ C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\B
 C:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\config.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\ApplicationIcon.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Background.png
-D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.refresh.rest.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.transport.ff.rest.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.transport.pause.rest.png
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\appbar.transport.play.rest.png
@@ -51,3 +50,11 @@ D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\o
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\MusicPlayer.pdb
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\XapCacheFile.xml
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\screenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\noRepeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\noscreenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\noShuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\Imagenes\no.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Debug\logoPage.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\SplashScreenImage.jpg
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\MusicPlayer.dll.CodeAnalysisLog.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\Bin\Debug\MusicPlayer.dll.lastcodeanalysissucceeded

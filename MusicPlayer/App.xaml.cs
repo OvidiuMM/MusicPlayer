@@ -81,12 +81,14 @@ namespace MusicPlayer
         // Este código no se ejecutará cuando la aplicación se reactive
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
+          
         }
 
         // Código para ejecutar cuando la aplicación se activa (se trae a primer plano)
         // Este código no se ejecutará cuando la aplicación se inicie por primera vez
         private void Application_Activated(object sender, ActivatedEventArgs e)
         {
+        
             // Asegurarse de que el estado de la aplicación se restaura adecuadamente
             if (!App.ViewModel.IsDataLoaded)
             {

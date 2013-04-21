@@ -116,7 +116,9 @@
 
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
-
+        <Storyboard x:Name="Scroll" RepeatBehavior="Forever">
+            <DoubleAnimation From="480" To="-2000" Storyboard.TargetName="translate" Storyboard.TargetProperty="X" Duration="0:0:15" />
+        </Storyboard>
 
     </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot es la cuadrícula raíz donde se coloca todo el contenido de la página-->
@@ -124,9 +126,7 @@
 
         <!--Control Panorama-->
         <controls:Panorama Name="PanoramaPrinc" Title="music player" SelectionChanged="PanoramaPrinc_SelectionChanged">
-            <!--   <controls:Panorama.Background>
-                <ImageBrush ImageSource="PanoramaBackground.png"/>
-            </controls:Panorama.Background>-->
+          
             <controls:Panorama.TitleTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="20" Margin="0,70,0,0"  Foreground="{StaticResource PhoneAccentBrush}" />
@@ -144,7 +144,7 @@
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="200"/>
                                 <RowDefinition Height="100"/>
-                                <RowDefinition Height="250*"/>
+                                <RowDefinition Height="150*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100*"/>
@@ -191,17 +191,25 @@
                                     </DataTemplate>
                                 </ListBox.ItemTemplate>
                             </ListBox>
-                            <Grid Grid.Row="2" Grid.ColumnSpan="3">
+                            <Grid Grid.Row="2" Grid.ColumnSpan="3" VerticalAlignment="Top">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="125*"/>
 
                                 </Grid.RowDefinitions>
-                                <UserControl>
-                                   
-                                        <ScrollViewer Grid.Row="0" x:Name="scrollViewer" Width="{Binding ActualWidth, ElementName=userControl, Mode=OneWay}" Height="{Binding ActualHeight, ElementName=userControl, Mode=OneWay}">
-                                        <TextBlock Name="titleTextBlock" TextWrapping="Wrap" Text="Your song library is empty"   Style="{StaticResource PhoneTextExtraLargeStyle}"  Foreground="{StaticResource PhoneAccentBrush}"/>
-                                        </ScrollViewer>
-                                   
+                                <UserControl VerticalAlignment="Top">
+
+                                    <ScrollViewer Grid.Row="0" x:Name="LongScrollViewer" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Hidden" IsEnabled="False" VerticalAlignment="Top" HorizontalAlignment="Left" >
+                                        <StackPanel Margin="0" Height="58" VerticalAlignment="Top" HorizontalAlignment="Left">
+                                            <TextBlock x:Name="LongTextBlock" Text="You have an empty song library." Margin="0" Style="{StaticResource PhoneTextLargeStyle}" VerticalAlignment="Top" 
+                                                HorizontalAlignment="Center" TextAlignment="Center" TextTrimming="None" TextWrapping="NoWrap" Foreground="{StaticResource PhoneAccentBrush}">
+                                                <TextBlock.RenderTransform>
+                                                    <TranslateTransform x:Name="translate" />
+                                                </TextBlock.RenderTransform>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </ScrollViewer>
+
+                                        
                                 </UserControl>
                            
                             </Grid>

@@ -65,6 +65,7 @@ namespace MusicPlayer
             "albums"
         };
 
+        private List<Song> songsList;
         // Constructor
         public MainPage()
         {
@@ -80,6 +81,8 @@ namespace MusicPlayer
             ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["modo"];
 
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
+
+
         }
 
         // Cargar datos para los elementos ViewModel
@@ -113,19 +116,29 @@ namespace MusicPlayer
                 //backgroundworker event
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+                
+                 songsList= songCollection.ToList<Song>();
             }
             else
             {
                 MessageBox.Show("There is no song to be played");
-                ApplicationBar.IsMenuEnabled = false;
+                PanoramaPrinc.IsEnabled = false;
+                canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/no.png");            
+        
+                openCanvas();
+                
                 ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["listas"];
                 ApplicationBar.IsMenuEnabled = false;
+
             }
+            //initiate the autoscrolling of the song title
+            initAutoScrolling();
                 if (!App.ViewModel.IsDataLoaded)
                 {
                     App.ViewModel.LoadData();
                 }
-      
+                NavigationService.RemoveBackEntry();
+            
         }
 
         //change the applicationBar for each panorama view
@@ -201,11 +214,10 @@ namespace MusicPlayer
 
             ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
             menu.Text = (menu.Text.Equals("repeat")) ? "don't repeat" : "repeat";
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/Repeat.png");
-            
+            string source = (menu.Text.Equals("repeat")) ? "Imagenes/noRepeat.png" : "Imagenes/Repeat.png";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);            
             openCanvas();
-            worker.RunWorkerAsync();
-       
+            worker.RunWorkerAsync();     
 
     }
        
@@ -217,10 +229,11 @@ namespace MusicPlayer
 
             ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
             menu.Text = (menu.Text.Equals("shuffle")) ? "don't shuffle" : "shuffle";
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/Shuffle.png");
+            string source = (menu.Text.Equals("shuffle")) ? "Imagenes/noShuffle.png" : "Imagenes/Shuffle.png";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);
             openCanvas();
             worker.RunWorkerAsync();
-             
+            MediaPlayer.IsShuffled = cp.shuffled; 
         }
 
       
@@ -231,7 +244,9 @@ namespace MusicPlayer
 
             ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
             menu.Text = (menu.Text.Equals("stop")) ? "don't stop" : "stop";
+        
             canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/stopButton.png");
+            
             openCanvas();
             worker.RunWorkerAsync();
             
@@ -245,9 +260,10 @@ namespace MusicPlayer
                 PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
 
             ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
-            menu.Text = (menu.Text.Equals("bloq. Screen")) ? "don't bloq" : "bloq";
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/screenOn.png");
-            openCanvas();
+            menu.Text = (menu.Text.Equals("bloq. Screen")) ? "don't bloq" : "bloq. Screen";
+            string source = (menu.Text.Equals("bloq. Screen")) ? "Imagenes/noscreenOn.png" : "Imagenes/screenOn.png";
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);
+             openCanvas();
             worker.RunWorkerAsync();
          
         }
@@ -290,12 +306,24 @@ namespace MusicPlayer
             ApplicationBar.IsMenuEnabled = true;
         }
 
+        //scroll text method
+        private void initAutoScrolling() {
+            Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            this.LongTextBlock.Measure(size);
+            size = this.LongTextBlock.DesiredSize;
+
+            if (size.Width > this.ActualWidth)
+            {
+                this.Scroll.Begin();
+            }
+        }
+
         // al darle al botón atrás
         public void goBack()
         {
           try{
             // si está en modo no cíclico y está en el primer elemento parar
-            if (!MediaPlayer.IsRepeating && cp.position == 0)
+            if (!MediaPlayer.IsRepeating && cp.position == 0&& !cp.shuffled)
             {
                 MediaPlayer.Stop();
             }
@@ -309,6 +337,8 @@ namespace MusicPlayer
             }
             //actualizar datos canción
             UpdateCurrentSongInformation();
+
+            
           }
           catch (Exception ex)
           {
@@ -374,7 +404,8 @@ namespace MusicPlayer
                 trackListBox.SelectedIndex = cp.position;
             }
             //actualizar datos canción
-            updateSongsListBoxItem();
+            UpdateCurrentSongInformation();
+           // updateSongsListBoxItem();
            }
            catch (Exception ex)
            {
@@ -382,15 +413,24 @@ namespace MusicPlayer
            }
         }
 
+        public void updateFromDisabled() {
+
+            if(MediaPlayer.Queue.ActiveSongIndex!=-1)
+            cp.position = MediaPlayer.Queue.ActiveSongIndex;
+            trackListBox.SelectedIndex = cp.position;
+        
+        }
+
         public void changeToAllSongsList()
         {
             try{
+
             songListBox.ItemsSource = "";
-            this.fuente = 0;
-       
+            this.fuente = 0;       
             aTextBlock.Text = "All the songs";
             aTextBlock.Visibility = System.Windows.Visibility.Visible;  
             changeSongsListOrigin();
+            
             }
             catch (Exception ex)
             {
@@ -416,20 +456,33 @@ namespace MusicPlayer
         }
 
         public void songChangedFromMPlayer()
-        {
-            //updateSongsListBoxItem();
-         
+        {           
+            updateSongsListBoxItem();         
         }
 
         public void updateSongsListBoxItem()
         {
-        try
-            {
+        try{
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
             {
-                cp.position = MediaPlayer.Queue.ActiveSongIndex;
-                if(trackListBox.SelectedIndex!=cp.position)
-                trackListBox.SelectedIndex = cp.position;
+                /*if (MediaPlayer.Queue.ActiveSongIndex == cp.position + 1)
+                {
+                    cp.siguiente();
+                    MediaPlayer.Queue.ActiveSongIndex = cp.position;
+                }
+                else
+                {*/
+                if (MediaPlayer.IsShuffled)
+                {
+                    
+                    cp.position = songsList.IndexOf(MediaPlayer.Queue.ActiveSong);
+                }
+                else{
+                    cp.position = MediaPlayer.Queue.ActiveSongIndex;
+                 
+            }
+                if (trackListBox.SelectedIndex != cp.position)
+                    trackListBox.SelectedIndex = cp.position;
                 //actualizar los campos de texto
                 UpdateCurrentSongInformation();
             }
@@ -449,8 +502,22 @@ namespace MusicPlayer
                     cp.position = trackListBox.SelectedIndex;
                 else
                     cp.position = 0;
-                if (MediaPlayer.Queue.ActiveSongIndex != cp.position)
-                    MediaPlayer.Queue.ActiveSongIndex = cp.position;
+                if (!cp.shuffled)
+                {
+                    if (MediaPlayer.Queue.ActiveSongIndex != cp.position)
+                        MediaPlayer.Queue.ActiveSongIndex = cp.position;
+                }
+                else {
+
+
+                    if (cp.position != songsList.IndexOf(MediaPlayer.Queue.ActiveSong))
+                    {
+                        MediaPlayer.IsShuffled = false;
+
+                        MediaPlayer.Queue.ActiveSongIndex = cp.position;
+                        MediaPlayer.IsShuffled = true;
+                    }
+                }
                 UpdateCurrentSongInformation();
             }
             catch (Exception ex)
@@ -580,13 +647,11 @@ namespace MusicPlayer
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
                 song = MediaPlayer.Queue.ActiveSong;
             else
-                song = songCollection.ElementAt(cp.position);
-       
-                titleTextBlock.Text = song.Name + song.Artist.Name + song.Album.Name +
-                    song.Duration.Hours.ToString() + ":" + song.Duration.Minutes.ToString() + ":" + song.Duration.Seconds.ToString();
+                song = songCollection.ElementAt(cp.position);       
+                LongTextBlock.Text = "NAME:   "+song.Name + "   ARTIST:   "+song.Artist.Name + "    ALBUM:    "+song.Album.Name +
+                    "   DURATION:    "+song.Duration.Hours.ToString() + " : " + song.Duration.Minutes.ToString() + " : " + song.Duration.Seconds.ToString();
                 if (trackListBox.SelectedIndex != cp.position)
-                    trackListBox.SelectedIndex = cp.position;
-                
+                    trackListBox.SelectedIndex = cp.position;                
             }
             catch (Exception ex)
             {
