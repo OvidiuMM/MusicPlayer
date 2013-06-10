@@ -28,3 +28,72 @@ D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\o
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Release\MusicPlayer.dll
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Release\MusicPlayer.pdb
 D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Release\XapCacheFile.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer\MusicPlayer\obj\Release\MusicPlayer.csprojResolveAssemblyReference.cache
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\ApplicationIcon.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Background.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\appbar.transport.ff.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\appbar.transport.pause.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\appbar.transport.play.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\appbar.transport.rew.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\config.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\logo.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\no.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\noRepeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\noscreenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\noShuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\Repeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\Shuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\stopButton.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Imagenes\screenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\SplashScreenImage.jpg
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\MusicPlayer.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\MusicPlayer.pdb
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\AppManifest.xaml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\MusicPlayer.xap
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Microsoft.Phone.Controls.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\Bin\Release\Microsoft.Phone.Controls.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\MusicPlayer.csprojResolveAssemblyReference.cache
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\App.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\MainPage.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\logoPage.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\MusicPlayer.g.resources
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\MusicPlayer.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\MusicPlayer.pdb
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer - copia\MusicPlayer\obj\Release\XapCacheFile.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\ApplicationIcon.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Background.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\appbar.transport.ff.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\appbar.transport.pause.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\appbar.transport.play.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\appbar.transport.rew.rest.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\config.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\logo.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\no.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\noRepeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\noscreenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\noShuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\Repeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\Shuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\stopButton.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\screenOn.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\SplashScreenImage.jpg
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\codigo\StorageManager.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\MusicPlayer.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\MusicPlayer.pdb
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\AppManifest.xaml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\MusicPlayer.xap
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Microsoft.Phone.Controls.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Microsoft.Phone.Controls.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\MusicPlayer.csprojResolveAssemblyReference.cache
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\App.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\MainPage.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\logoPage.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\MusicPlayer.g.resources
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\MusicPlayer.dll
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\MusicPlayer.pdb
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\XapCacheFile.xml
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\ViewPages\info.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\obj\Release\ViewPages\Configurations.g.cs
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\WhiteRepeat.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\WhiteShuffle.png
+D:\Users\Juanito\Documents\Visual Studio 2010\Projects\MusicPlayer v1.1\MusicPlayer\Bin\Release\Imagenes\noalbum.png

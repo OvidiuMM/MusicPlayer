@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2009/deployment" AppPlatformVersion="7.1">
-  <App xmlns="" ProductID="{8285a1b3-9e31-4a5f-9d9e-8c476142ff32}" Title="MusicPlayer" RuntimeType="Silverlight" Version="1.0.0.0" Genre="apps.normal" Author="Ovidiu M." Description="A simple and practical music player." Publisher="Gipsyz" BitsPerPixel="32">
+  <App xmlns="" ProductID="{8285a1b3-9e31-4a5f-9d9e-8c476142ff32}" Title="MusicPlayer" RuntimeType="Silverlight" Version="1.1.0.0" Genre="apps.normal" Author="Ovidiu M." Description="A simple and practical music player." Publisher="Gipsyz" BitsPerPixel="32">
     <IconPath IsRelative="true" IsResource="false">Imagenes/logo.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_MEDIALIB" />

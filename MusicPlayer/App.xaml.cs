@@ -12,28 +12,17 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using MusicPlayer.codigo;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Media;
 
 namespace MusicPlayer
 {
     public partial class App : Application
     {
-        private static MainViewModel viewModel = null;
 
-        /// <summary>
-        /// ViewModel estático que usan las vistas con el que se van a enlazar.
-        /// </summary>
-        /// <returns>Objeto MainViewModel.</returns>
-        public static MainViewModel ViewModel
-        {
-            get
-            {
-                // Retrasar la creación del modelo de vista hasta que sea necesario
-                if (viewModel == null)
-                    viewModel = new MainViewModel();
-
-                return viewModel;
-            }
-        }
+        private StorageManager storage = StorageManager.Instance;
+      
 
         /// <summary>
         /// Proporcionar acceso sencillo al marco raíz de la aplicación telefónica.
@@ -87,19 +76,20 @@ namespace MusicPlayer
         // Código para ejecutar cuando la aplicación se activa (se trae a primer plano)
         // Este código no se ejecutará cuando la aplicación se inicie por primera vez
         private void Application_Activated(object sender, ActivatedEventArgs e)
-        {
-        
-            // Asegurarse de que el estado de la aplicación se restaura adecuadamente
-            if (!App.ViewModel.IsDataLoaded)
-            {
-                App.ViewModel.LoadData();
-            }
+        {           
+                MediaPlayer.IsShuffled = false;           
         }
 
         // Código para ejecutar cuando la aplicación se desactiva (se envía a segundo plano)
         // Este código no se ejecutará cuando la aplicación se cierre
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
+            if (storage.getSetting(Constants.SHUFFLED) == Constants.TRUE)
+            {
+                MediaPlayer.IsShuffled = true;
+            }
+            else
+                MediaPlayer.IsShuffled = false;
             // Asegurarse de que el estado de la aplicación requerida persiste aquí.
         }
 
@@ -107,7 +97,17 @@ namespace MusicPlayer
         // Este código no se ejecutará cuando la aplicación se desactive
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
+            if (storage.getSetting(Constants.SHUFFLED) == Constants.TRUE)
+            {
+                MediaPlayer.IsShuffled = true;
+            }
+            else
+                MediaPlayer.IsShuffled = false;
             PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
+            if (storage.getSetting(Constants.CLOSE).Equals("true"))
+            {
+                MediaPlayer.Stop();
+            }
         }
 
         // Código para ejecutar si hay un error de navegación

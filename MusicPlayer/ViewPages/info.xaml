@@ -1,0 +1,67 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="MusicPlayer.ViewPages.info"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot es la cuadrícula raíz donde se coloca todo el contenido de la página-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="5"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contiene el nombre de la aplicación y el título de la página-->
+
+        <TextBlock Grid.Row="0" Text="Music Player" Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneAccentBrush}"/>
+        
+        <TextBlock Grid.Row="2" Text="informations" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="Bold" Foreground="{StaticResource PhoneAccentBrush}" TextWrapping="Wrap"/>
+        <Grid Grid.Row="4"  Height="250">
+            <ScrollViewer >
+                <StackPanel >
+                    <TextBlock Grid.Row="2" Text="info_text" Name="info_text" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap"/>
+                    <Button Content="mail us!" Height="70" Click="ApplicationBarMailButton_Click" Foreground="{StaticResource PhoneAccentBrush}" BorderBrush="{StaticResource PhoneAccentBrush}"/>
+                    </StackPanel >
+            </ScrollViewer>
+        </Grid>
+        
+        <TextBlock Grid.Row="6" Text="indications (scroll up)" Style="{StaticResource PhoneTextNormalStyle}" FontWeight="Bold" Foreground="{StaticResource PhoneAccentBrush}"/>
+        <Grid Grid.Row="8"  Height="400">
+                <ScrollViewer >
+                <Grid>
+                    <StackPanel >
+                        <TextBlock Name="config_text_first" Text="config_text_first" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                        <Image Width="300" Name="config_text_firstImage" Margin="0,5,0,0"></Image>
+                        <TextBlock Name="config_text_second" Text="config_text_second" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                        <Image Width="300" Name="config_text_secondImage" Margin="0,5,0,0"></Image>
+                        <TextBlock Name="config_text_third" Text="config_text_third" Style="{StaticResource PhoneTextNormalStyle}" TextWrapping="Wrap" Margin="0,10,0,0"/>
+                        <Image Width="300" Name="config_text_thirdImage" Margin="0,5,0,0"></Image>
+                        <Image Width="300" Name="config_text_fourthImage" Margin="0,5,0,0"></Image>
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+                </Grid>
+            
+        <!--ContentPanel. Colocar aquí el contenido adicional-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0,12,0">
+
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

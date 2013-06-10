@@ -19,9 +19,15 @@ using System.Collections.ObjectModel;
 using System.IO.IsolatedStorage;
 using System.Windows.Resources;
 using System.IO;
+
+
 using MusicPlayer.codigo;
+using MusicPlayer.ViewModels;
+
+
 using System.Threading;
 using System.ComponentModel;
+using System.Windows.Navigation;
 
 namespace MusicPlayer
 {
@@ -50,20 +56,8 @@ namespace MusicPlayer
 
         private BackgroundWorker worker = new BackgroundWorker();
 
-        //application bars options
-        private string[] AppBars = new string[]
-        {
-            "modo",
-            "listas"
-        };
-
-        //configuration options
-        private string[] listSource = new string[] { 
-            "all",
-            "play Lists",
-            "artists",
-            "albums"
-        };
+        private StorageManager storage = StorageManager.Instance;
+       
 
         private List<Song> songsList;
         // Constructor
@@ -74,15 +68,10 @@ namespace MusicPlayer
             //the phone can't go to sleep
             PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled;
 
-            // Establecer el contexto de datos del control ListBox control en los datos de ejemplo
-            DataContext = App.ViewModel;
-
             //the default appbar should be this
             ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["modo"];
 
             this.Loaded += new RoutedEventHandler(MainPage_Loaded);
-
-
         }
 
         // Cargar datos para los elementos ViewModel
@@ -98,8 +87,10 @@ namespace MusicPlayer
             }
             //recover the media library songs as the initial song list
             library = new MediaLibrary();
+
             //store the songs
             songCollection = library.Songs;
+
             if (songCollection.Count > 0)
             {
                 cp = new ControlPlayer(songCollection.Count);
@@ -109,43 +100,90 @@ namespace MusicPlayer
 
                 //update the song list and the song meta data
                 updateListForCategory(0);
-             
+
                 MediaPlayer.Stop();
                 cp.position = 0;
 
                 //backgroundworker event
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-                
-                 songsList= songCollection.ToList<Song>();
+
+                songsList = songCollection.ToList<Song>();
+                if (storage.getSetting(Constants.SHUFFLED) == null)
+                {
+                    storage.setSetting(Constants.SHUFFLED, Constants.FALSE);
+                }
             }
             else
             {
                 MessageBox.Show("There is no song to be played");
                 PanoramaPrinc.IsEnabled = false;
-                canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/no.png");            
-        
-                openCanvas();
-                
-                ApplicationBar = (Microsoft.Phone.Shell.ApplicationBar)Resources["listas"];
-                ApplicationBar.IsMenuEnabled = false;
+                canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/no.png");
 
+                openCanvas();
+
+                
+                ApplicationBar.IsMenuEnabled = false;
             }
             //initiate the autoscrolling of the song title
             initAutoScrolling();
-                if (!App.ViewModel.IsDataLoaded)
-                {
-                    App.ViewModel.LoadData();
-                }
-                NavigationService.RemoveBackEntry();
-            
+            NavigationService.RemoveBackEntry();
+            this.fillLists();
         }
+
+        private void fillLists() {
+
+            if (library != null)
+            {
+                // the play lists collection Object
+                playlists = library.Playlists;
+
+                // the artists lists collection Object
+                artistlists = library.Artists;
+
+                // the albums lists collection Object
+                albumelists = library.Albums;
+
+                this.songListBox.ItemsSource = library.Songs;
+                
+                
+                this.artistsListBox.ItemsSource = artistlists;
+                this.playListBox.ItemsSource = playlists;
+                     ObservableCollection<AlbumModel> ds = new ObservableCollection<AlbumModel>();
+            
+
+               foreach(Album album in albumelists){
+
+                   /* if (album.HasArt)
+                    {
+                        AlbumModel am = new AlbumModel(album);
+                        this.albumsListBox.Items.Add(am);
+
+                    }
+                    else
+
+                    this.albumsListBox.Items.Add(album);*/
+                   ds.Add(new AlbumModel(album));
+                }
+                this.albumsListBox.ItemsSource = ds;
+            }
+
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("MainPage-Navigated to MainPage");
+            fillLists();
+
+            //TODO: update configurations
+        }
+
 
         //change the applicationBar for each panorama view
         private void PanoramaPrinc_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             //change app bar for the proper panorama item
-            ApplicationBar = (ApplicationBar)this.Resources[this.AppBars[this.PanoramaPrinc.SelectedIndex]];
+          //  ApplicationBar = (ApplicationBar)this.Resources[this.AppBars[this.PanoramaPrinc.SelectedIndex]];
         }
 
         private void backButton_Click(object sender, RoutedEventArgs e)
@@ -170,13 +208,41 @@ namespace MusicPlayer
 
         private void songListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            storage.setSetting(Constants.SOURCE,Constants.ALL);
+            storage.setSetting(Constants.LISTNAME, "");
+            storage.setSetting(Constants.POSITION, this.songListBox.SelectedIndex.ToString());
+            
+            changeSongsListOrigin();
+
+        }
+        private void playListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            
+            
+            storage.setSetting(Constants.SOURCE, Constants.PLAYLISTS);
+            storage.setSetting(Constants.LISTNAME, playListBox.SelectedItem.ToString());
+            storage.setSetting(Constants.POSITION, this.playListBox.SelectedIndex.ToString());
+            changeSongsListOrigin();
+        }
+        private void albumsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            storage.setSetting(Constants.SOURCE, Constants.ALBUMS);
+            storage.setSetting(Constants.LISTNAME, "");
+            storage.setSetting(Constants.POSITION, this.albumsListBox.SelectedIndex.ToString());
             changeSongsListOrigin();
         }
 
-        private void aTextBlock_Tap(object sender, GestureEventArgs e)
+        private void artistsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            changeToAllSongsList();
+            storage.setSetting(Constants.SOURCE, Constants.ARTISTS);
+            storage.setSetting(Constants.LISTNAME, "");
+            storage.setSetting(Constants.POSITION, this.artistsListBox.SelectedIndex.ToString());
+            changeSongsListOrigin();
         }
+
+
+
+      
         //change the play pause button
         void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
         {
@@ -212,13 +278,11 @@ namespace MusicPlayer
         {
             MediaPlayer.IsRepeating = !(MediaPlayer.IsRepeating);
 
-            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
-            menu.Text = (menu.Text.Equals("repeat")) ? "don't repeat" : "repeat";
-            string source = (menu.Text.Equals("repeat")) ? "Imagenes/noRepeat.png" : "Imagenes/Repeat.png";
+
+            string source = (MediaPlayer.IsRepeating) ? "Imagenes/noRepeat.png" : "Imagenes/Repeat.png";
             canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);            
             openCanvas();
             worker.RunWorkerAsync();     
-
     }
        
        
@@ -227,19 +291,19 @@ namespace MusicPlayer
         {
             cp.shuffled = !(cp.shuffled);
 
-            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
-            menu.Text = (menu.Text.Equals("shuffle")) ? "don't shuffle" : "shuffle";
-            string source = (menu.Text.Equals("shuffle")) ? "Imagenes/noShuffle.png" : "Imagenes/Shuffle.png";
+            string source = (cp.shuffled) ? "Imagenes/noShuffle.png" : "Imagenes/Shuffle.png";
             canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);
             openCanvas();
             worker.RunWorkerAsync();
-            MediaPlayer.IsShuffled = cp.shuffled; 
+            MediaPlayer.IsShuffled = cp.shuffled;
+            storage.setSetting(Constants.SHUFFLED, cp.shuffled.ToString());
         }
 
       
 
-        private void ApplicationBarMenuItemStop_Click(object sender, EventArgs e)
+        private void ApplicationBarMenuItemConfig_Click(object sender, EventArgs e)
         {
+            /*
             MediaPlayer.Stop();
 
             ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
@@ -248,7 +312,9 @@ namespace MusicPlayer
             canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/stopButton.png");
             
             openCanvas();
-            worker.RunWorkerAsync();
+            worker.RunWorkerAsync();*/
+            NavigationService.Navigate(new Uri(Constants.CONFIGSCLASS, UriKind.Relative));
+
             
         }
 
@@ -355,8 +421,7 @@ namespace MusicPlayer
             if (MediaPlayer.State == MediaState.Playing)
             {
                 //pausar media player
-                MediaPlayer.Pause();
-                
+                MediaPlayer.Pause();                
             }
 
             //si está en pausa
@@ -366,9 +431,7 @@ namespace MusicPlayer
                     //reproducir desde la última posición
                     MediaPlayer.Resume();
                 else
-                    MediaPlayer.Play(songCollection, cp.position);                
-             
-                
+                    MediaPlayer.Play(songCollection, cp.position);  
             }
             //si está parado
             else if (MediaPlayer.State == MediaState.Stopped)
@@ -393,7 +456,6 @@ namespace MusicPlayer
             if (!MediaPlayer.IsRepeating && cp.position == cp.longitud)
             {
                 MediaPlayer.Stop();
-
             }
             else
             {
@@ -417,8 +479,7 @@ namespace MusicPlayer
 
             if(MediaPlayer.Queue.ActiveSongIndex!=-1)
             cp.position = MediaPlayer.Queue.ActiveSongIndex;
-            trackListBox.SelectedIndex = cp.position;
-        
+            trackListBox.SelectedIndex = cp.position;        
         }
 
         public void changeToAllSongsList()
@@ -429,8 +490,7 @@ namespace MusicPlayer
             this.fuente = 0;       
             aTextBlock.Text = "All the songs";
             aTextBlock.Visibility = System.Windows.Visibility.Visible;  
-            changeSongsListOrigin();
-            
+            changeSongsListOrigin();            
             }
             catch (Exception ex)
             {
@@ -464,22 +524,13 @@ namespace MusicPlayer
         {
         try{
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
-            {
-                /*if (MediaPlayer.Queue.ActiveSongIndex == cp.position + 1)
-                {
-                    cp.siguiente();
-                    MediaPlayer.Queue.ActiveSongIndex = cp.position;
-                }
-                else
-                {*/
+            {              
                 if (MediaPlayer.IsShuffled)
-                {
-                    
+                {                    
                     cp.position = songsList.IndexOf(MediaPlayer.Queue.ActiveSong);
                 }
                 else{
-                    cp.position = MediaPlayer.Queue.ActiveSongIndex;
-                 
+                    cp.position = MediaPlayer.Queue.ActiveSongIndex;                 
             }
                 if (trackListBox.SelectedIndex != cp.position)
                     trackListBox.SelectedIndex = cp.position;
@@ -508,12 +559,9 @@ namespace MusicPlayer
                         MediaPlayer.Queue.ActiveSongIndex = cp.position;
                 }
                 else {
-
-
                     if (cp.position != songsList.IndexOf(MediaPlayer.Queue.ActiveSong))
                     {
                         MediaPlayer.IsShuffled = false;
-
                         MediaPlayer.Queue.ActiveSongIndex = cp.position;
                         MediaPlayer.IsShuffled = true;
                     }
@@ -540,10 +588,9 @@ namespace MusicPlayer
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString() + " -->updateTheSongsList method ");
-            }
-    
+            }        
+        }      
 
-        }
         //al cambiar a otra lista
         public void changeSongsListOrigin()
         {
@@ -557,24 +604,28 @@ namespace MusicPlayer
                     //obtiene la lista con las canciones de la libreria
                     songCollection = playlists.ElementAt(songListBox.SelectedIndex).Songs;
                     nombre = playlists.ElementAt(songListBox.SelectedIndex).Name;
+                    songsList = songCollection.ToList<Song>();
                     break;
                 case 2:
                     //cambia la lista
 
                     songCollection = artistlists.ElementAt(songListBox.SelectedIndex).Songs;
                     nombre = artistlists.ElementAt(songListBox.SelectedIndex).Name;
+                    songsList = songCollection.ToList<Song>();
                     break;
                 case 3:
                     //cambia la lista
 
                     songCollection = albumelists.ElementAt(songListBox.SelectedIndex).Songs;
                     nombre = albumelists.ElementAt(songListBox.SelectedIndex).Name;
+                    songsList = songCollection.ToList<Song>();
                     break;
                 default:
                     //obtiene la lista con las canciones de la libreria
 
                     //cambia la lista
                     songCollection = library.Songs;
+                    songsList = songCollection.ToList<Song>();
                     break;
             }
             //actualiza la lista de canciones
@@ -647,11 +698,16 @@ namespace MusicPlayer
             if (MediaPlayer.Queue.ActiveSongIndex != -1)
                 song = MediaPlayer.Queue.ActiveSong;
             else
-                song = songCollection.ElementAt(cp.position);       
-                LongTextBlock.Text = "NAME:   "+song.Name + "   ARTIST:   "+song.Artist.Name + "    ALBUM:    "+song.Album.Name +
-                    "   DURATION:    "+song.Duration.Hours.ToString() + " : " + song.Duration.Minutes.ToString() + " : " + song.Duration.Seconds.ToString();
+                song = songCollection.ElementAt(cp.position);  
+     
+                LongTextBlock.Text = "NAME:   "+song.Name + "   ARTIST:   "+song.Artist.Name + "    ALBUM:    "+song.Album.Name ;
                 if (trackListBox.SelectedIndex != cp.position)
-                    trackListBox.SelectedIndex = cp.position;                
+                    trackListBox.SelectedIndex = cp.position;
+                String horas=(song.Duration.Hours.ToString().Length==1)?("0"+song.Duration.Hours.ToString()):song.Duration.Hours.ToString() ;
+                String minutos = (song.Duration.Minutes.ToString().Length == 1) ? ("0" + song.Duration.Minutes.ToString()) : song.Duration.Minutes.ToString(); ;
+                String secundos = (song.Duration.Seconds.ToString().Length == 1) ? ("0" + song.Duration.Seconds.ToString()) : song.Duration.Seconds.ToString(); ;
+                this.txtSongDuration.Text = horas + ":" + minutos + ":" + secundos;
+
             }
             catch (Exception ex)
             {

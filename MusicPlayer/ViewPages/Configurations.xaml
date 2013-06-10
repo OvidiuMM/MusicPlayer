@@ -1,0 +1,48 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="MusicPlayer.ViewPages.Configurations"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+     SupportedOrientations="PortraitOrLandscape"  Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="True">
+
+    <!--LayoutRoot es la cuadrícula raíz donde se coloca todo el contenido de la página-->
+    <Grid x:Name="LayoutRoot" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="600"/>
+        </Grid.RowDefinitions>
+
+        <!--TitlePanel contiene el nombre de la aplicación y el título de la página-->
+        <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <TextBlock Text="Music Player" Style="{StaticResource PhoneTextNormalStyle}" Foreground="{StaticResource PhoneAccentBrush}"/>
+            <TextBlock Text="Configurations" FontSize="60" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}" Foreground="{StaticResource PhoneAccentBrush}"/>
+        </StackPanel>
+
+        <!--ContentPanel. Colocar aquí el contenido adicional-->
+        <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0">
+            <ScrollViewer>
+                <StackPanel>
+                    <CheckBox Content="bloq screen" HorizontalAlignment="Left" Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Bloq" />
+                    <CheckBox Content="close on exit" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Close" />
+                    <CheckBox Content="remember last song" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Remember"/>
+                    
+                  <!--  <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Volume"  Margin="100,10,0,0" VerticalAlignment="Top" Foreground="{StaticResource PhoneAccentBrush}"/>
+                    <Slider Name="barraVolumen" Minimum="0" Maximum="10" Tag="Volume" HorizontalAlignment="Left"  VerticalAlignment="Top"  Margin="100,0,0,0" Width="268" ValueChanged="Slider_ValueChanged_1"  />
+              -->
+                    <Button Content="info" HorizontalAlignment="Left"  VerticalAlignment="Top"  Margin="100,100,0,0" Foreground="{StaticResource PhoneAccentBrush}" BorderBrush="{StaticResource PhoneAccentBrush}" Width="268" Click="ButtonItemInfo_Click"/>
+                </StackPanel>
+            </ScrollViewer>
+
+        </Grid>
+    </Grid>
+   
+
+</phone:PhoneApplicationPage>
