@@ -70,7 +70,11 @@ namespace MusicPlayer
         // Este código no se ejecutará cuando la aplicación se reactive
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-          
+             if (storage.getSetting(Constants.REMEMBER)!=null&&storage.getSetting(Constants.REMEMBER).Equals("true"))
+            {
+                changeSongsListOrigin();          
+            
+            }       
         }
 
         // Código para ejecutar cuando la aplicación se activa (se trae a primer plano)
@@ -118,6 +122,7 @@ namespace MusicPlayer
                 // Ha habido un error de navegación; interrumpir el depurador
                 System.Diagnostics.Debugger.Break();
             }
+            MessageBox.Show("Something, somewhere, went very very wrong. Sorry for that. Working on those damned bugs. Please feedback us your impressions (be gentle).");
         }
 
         // Código para ejecutar en excepciones no controladas
@@ -129,6 +134,50 @@ namespace MusicPlayer
                 System.Diagnostics.Debugger.Break();
             }
         }
+
+        #region added methods
+        //al cambiar a otra lista
+        public void changeSongsListOrigin()
+        {           
+            string listName = storage.getSetting(Constants.SOURCE);
+            MediaLibrary library = new MediaLibrary();
+            SongCollection songCollection;
+            int pos = 0;
+            switch (listName)
+            {
+                case Constants.PLAYLISTS:
+                    pos = int.Parse( storage.getSetting(Constants.POSITION));
+                    //obtiene la lista con las canciones de la libreria
+                    songCollection = library.Playlists.ElementAt(pos).Songs;
+                  
+                    break;
+                case Constants.ARTISTS:
+                    //cambia la lista
+                   pos = int.Parse(storage.getSetting(Constants.POSITION));
+                   songCollection = library.Artists.ElementAt(pos).Songs;
+                    break;
+                case Constants.ALBUMS:
+                    //cambia la lista
+                    pos = int.Parse(storage.getSetting(Constants.POSITION));
+                    songCollection = library.Albums.ElementAt(pos).Songs;
+                  
+                    break;
+                default:
+                    //obtiene la lista con las canciones de la libreria
+
+                    //cambia la lista
+                    songCollection = library.Songs;
+                 
+                    break;
+            }
+            //actualiza la lista de canciones
+            if (songCollection.Count > 0)
+            {
+
+                MediaPlayer.Play(songCollection, int.Parse(storage.getSetting(Constants.SONGPOSITION)));
+            }            
+        }
+        #endregion
 
         #region Inicialización de la aplicación telefónica
 

@@ -18,8 +18,32 @@ namespace MusicPlayer.ViewPages{
 
         public Configurations()
         {            
-            InitializeComponent();            
+            InitializeComponent();
+
+            initiUIObjects();
+
         }
+
+        private void initiUIObjects()
+        {
+            if (storage.getSetting(Constants.CLOSE) != null && storage.getSetting(Constants.CLOSE).Equals("true"))
+            {
+                this.closeCKBox.IsChecked = true;
+            }
+            if (PhoneApplicationService.Current.UserIdleDetectionMode == Microsoft.Phone.Shell.IdleDetectionMode.Disabled) 
+            {
+                this.bloqScreenCKBox.IsChecked = true;
+            }
+
+            if( storage.getSetting(Constants.REMEMBER)!=null && storage.getSetting(Constants.REMEMBER).Equals("true"))
+            {            
+
+                this.remeberCKBox.IsChecked=true;
+            }
+
+        }
+
+
         private void ButtonItemInfo_Click(object sender, EventArgs e)
         {
             NavigationService.Navigate(new Uri(Constants.INFOCLASS, UriKind.Relative));
@@ -31,10 +55,11 @@ namespace MusicPlayer.ViewPages{
 
             if ((bool)check.IsChecked)
             {
-                    PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
+                  PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled; 
             }
             else{
-                    PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled;            
+                   
+              PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
             }
 
         }

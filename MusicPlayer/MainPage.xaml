@@ -238,8 +238,7 @@
                     </ListBox>                    
                  
                    
-                    <TextBlock Grid.Row="0"  HorizontalAlignment="Stretch" Name="aTextBlock" Text="Todo" VerticalAlignment="Stretch" FontSize="60"   Foreground="{StaticResource PhoneAccentBrush}" Tap="aTextBlock_Tap" Visibility="Collapsed"/>
-
+               
                 </Grid>
 
 

@@ -30,9 +30,9 @@
         <Grid x:Name="ContentPanel" Grid.Row="1" Margin="12,0">
             <ScrollViewer>
                 <StackPanel>
-                    <CheckBox Content="bloq screen" HorizontalAlignment="Left" Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Bloq" />
-                    <CheckBox Content="close on exit" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Close" />
-                    <CheckBox Content="remember last song" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Remember"/>
+                    <CheckBox Name="bloqScreenCKBox" Content="bloq screen" HorizontalAlignment="Left" Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Bloq" />
+                    <CheckBox Name="closeCKBox" Content="close on exit" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Close" />
+                    <CheckBox Name="remeberCKBox" Content="remember last song" HorizontalAlignment="Left"  Margin="100,50,0,0" VerticalAlignment="Top"  Foreground="{StaticResource PhoneAccentBrush}" Checked="CheckBox_Checked_Remember"/>
                     
                   <!--  <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="Volume"  Margin="100,10,0,0" VerticalAlignment="Top" Foreground="{StaticResource PhoneAccentBrush}"/>
                     <Slider Name="barraVolumen" Minimum="0" Maximum="10" Tag="Volume" HorizontalAlignment="Left"  VerticalAlignment="Top"  Margin="100,0,0,0" Width="268" ValueChanged="Slider_ValueChanged_1"  />

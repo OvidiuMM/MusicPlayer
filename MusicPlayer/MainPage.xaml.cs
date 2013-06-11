@@ -49,9 +49,7 @@ namespace MusicPlayer
         // the albums lists collection Object
         private AlbumCollection albumelists = null;
         
-        //songsCollection source : Total/listas/albumes/artistas
-        private int fuente = 0;
-
+     
         private ControlPlayer cp;
 
         private BackgroundWorker worker = new BackgroundWorker();
@@ -77,38 +75,71 @@ namespace MusicPlayer
         // Cargar datos para los elementos ViewModel
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            //si se está reproduciendo algo parrar
+         /*   //si se está reproduciendo algo parrar
             if (MediaPlayer.State == MediaState.Playing || MediaPlayer.State == MediaState.Paused)
             {
                 MediaPlayer.Stop();
                 //establecer a false estos valores
                 MediaPlayer.IsRepeating = false;
                 MediaPlayer.IsShuffled = false;
-            }
+            }*/
+           
+                            //mediaplayer listeners
+                MediaPlayer.ActiveSongChanged += new EventHandler<EventArgs>(MediaPlayer_ActiveSongChanged);
+                MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
+                
             //recover the media library songs as the initial song list
             library = new MediaLibrary();
 
             //store the songs
             songCollection = library.Songs;
-
+        
             if (songCollection.Count > 0)
             {
-                cp = new ControlPlayer(songCollection.Count);
-                //mediaplayer listeners
-                MediaPlayer.ActiveSongChanged += new EventHandler<EventArgs>(MediaPlayer_ActiveSongChanged);
-                MediaPlayer.MediaStateChanged += new EventHandler<EventArgs>(MediaPlayer_MediaStateChanged);
-
-                //update the song list and the song meta data
-                updateListForCategory(0);
-
-                MediaPlayer.Stop();
+                cp = new ControlPlayer(songCollection.Count);    
                 cp.position = 0;
+
+                this.fillLists();
+                //updates the songCollection to the las known position
+                recoverLastPosition();
+                 this.trackListBox.ItemsSource = songCollection;
+                songsList = songCollection.ToList<Song>();
+
+                //si hay una canción activa
+                if (MediaPlayer.Queue.ActiveSong != null)
+                {
+                    //MediaPlayer.IsRepeating = false;
+                    //MediaPlayer.IsShuffled = false;
+
+                    IEnumerable<Song> filteringQuery = songsList.Where(p => p.Name == MediaPlayer.Queue.ActiveSong.Name);
+
+                    if (filteringQuery.Count() < 1)
+                    {
+                        MediaPlayer.Stop();
+                        //        updateTheSongsList();
+                    }
+                    else
+                    {
+                        //update the song list and the song meta data
+                        this.UpdateCurrentSongInformation();
+
+
+
+                        cp.position = songsList.IndexOf(filteringQuery.ElementAt(0));
+
+                        this.trackListBox.SelectedIndex = cp.position;
+                    }
+                }
+                else
+                {
+                    this.trackListBox.SelectedIndex = 0;
+                }
 
                 //backgroundworker event
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
 
-                songsList = songCollection.ToList<Song>();
+                
                 if (storage.getSetting(Constants.SHUFFLED) == null)
                 {
                     storage.setSetting(Constants.SHUFFLED, Constants.FALSE);
@@ -128,7 +159,8 @@ namespace MusicPlayer
             //initiate the autoscrolling of the song title
             initAutoScrolling();
             NavigationService.RemoveBackEntry();
-            this.fillLists();
+         //  this.fillLists();
+            //updateTheSongsList();
         }
 
         private void fillLists() {
@@ -153,19 +185,13 @@ namespace MusicPlayer
             
 
                foreach(Album album in albumelists){
-
-                   /* if (album.HasArt)
-                    {
-                        AlbumModel am = new AlbumModel(album);
-                        this.albumsListBox.Items.Add(am);
-
-                    }
-                    else
-
-                    this.albumsListBox.Items.Add(album);*/
                    ds.Add(new AlbumModel(album));
                 }
                 this.albumsListBox.ItemsSource = ds;
+
+                playlists = library.Playlists;
+                artistlists = library.Artists;
+                albumelists = library.Albums;
             }
 
         }
@@ -173,11 +199,18 @@ namespace MusicPlayer
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             System.Diagnostics.Debug.WriteLine("MainPage-Navigated to MainPage");
-            fillLists();
-
-            //TODO: update configurations
+        //    fillLists();
+           
         }
 
+      
+        public void updateFromDisabled()
+        {
+
+            if (MediaPlayer.Queue.ActiveSongIndex != -1)
+                cp.position = MediaPlayer.Queue.ActiveSongIndex;
+            trackListBox.SelectedIndex = cp.position;
+        }
 
         //change the applicationBar for each panorama view
         private void PanoramaPrinc_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -186,6 +219,7 @@ namespace MusicPlayer
           //  ApplicationBar = (ApplicationBar)this.Resources[this.AppBars[this.PanoramaPrinc.SelectedIndex]];
         }
 
+        #region buttons events
         private void backButton_Click(object sender, RoutedEventArgs e)
         {
             goBack();
@@ -208,70 +242,47 @@ namespace MusicPlayer
 
         private void songListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            
+            int position = (songListBox.SelectedIndex >= 0) ? songListBox.SelectedIndex : 0;
+
             storage.setSetting(Constants.SOURCE,Constants.ALL);
             storage.setSetting(Constants.LISTNAME, "");
-            storage.setSetting(Constants.POSITION, this.songListBox.SelectedIndex.ToString());
+            storage.setSetting(Constants.POSITION, position.ToString());
             
             changeSongsListOrigin();
 
         }
         private void playListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
-            
+
+            String name = (playListBox.SelectedIndex >= 0) ? playListBox.SelectedItem.ToString() : "";
+            int position = (playListBox.SelectedIndex >= 0) ? playListBox.SelectedIndex : 0;
+
             storage.setSetting(Constants.SOURCE, Constants.PLAYLISTS);
-            storage.setSetting(Constants.LISTNAME, playListBox.SelectedItem.ToString());
-            storage.setSetting(Constants.POSITION, this.playListBox.SelectedIndex.ToString());
+            storage.setSetting(Constants.LISTNAME, name);
+            storage.setSetting(Constants.POSITION, position.ToString());
             changeSongsListOrigin();
         }
         private void albumsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            String name = (albumsListBox.SelectedIndex >= 0) ? albumsListBox.SelectedItem.ToString() : "";
+            int position = (albumsListBox.SelectedIndex >= 0) ? albumsListBox.SelectedIndex : 0;
+
             storage.setSetting(Constants.SOURCE, Constants.ALBUMS);
-            storage.setSetting(Constants.LISTNAME, "");
-            storage.setSetting(Constants.POSITION, this.albumsListBox.SelectedIndex.ToString());
+            storage.setSetting(Constants.LISTNAME, name);
+            storage.setSetting(Constants.POSITION, position.ToString());
             changeSongsListOrigin();
         }
 
         private void artistsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            String name = (artistsListBox.SelectedIndex >= 0) ? artistsListBox.SelectedItem.ToString() : "";
+            int position = (artistsListBox.SelectedIndex >= 0) ? artistsListBox.SelectedIndex : 0;
+
             storage.setSetting(Constants.SOURCE, Constants.ARTISTS);
-            storage.setSetting(Constants.LISTNAME, "");
-            storage.setSetting(Constants.POSITION, this.artistsListBox.SelectedIndex.ToString());
+            storage.setSetting(Constants.LISTNAME, name);
+            storage.setSetting(Constants.POSITION, position.ToString());
             changeSongsListOrigin();
-        }
-
-
-
-      
-        //change the play pause button
-        void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
-        {
-            changePlayerState();
-        }
-
-        void MediaPlayer_ActiveSongChanged(object sender, EventArgs e)
-        {
-            songChangedFromMPlayer();
-        }
-
-        private void ApplicationBarMenuItemArtistas_Click(object sender, EventArgs e)
-        {
-            updateListForCategory(2);
-            }
-
-        private void ApplicationBarMenuItemAlbumes_Click(object sender, EventArgs e)
-        {
-            updateListForCategory(3);
-        }
-
-        private void ApplicationBarMenuItemListas_Click(object sender, EventArgs e)
-        {
-            updateListForCategory(1);
-
-        }
-        private void ApplicationBarMenuItemTodo_Click(object sender, EventArgs e)
-        {
-            updateListForCategory(0);
         }
 
         private void ApplicationBarMenuItemRepeat_Click(object sender, EventArgs e)
@@ -280,12 +291,12 @@ namespace MusicPlayer
 
 
             string source = (MediaPlayer.IsRepeating) ? "Imagenes/noRepeat.png" : "Imagenes/Repeat.png";
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);            
+            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);
             openCanvas();
-            worker.RunWorkerAsync();     
-    }
-       
-       
+            worker.RunWorkerAsync();
+        }
+
+
 
         private void ApplicationBarMenuItemShuffle_Click(object sender, EventArgs e)
         {
@@ -299,40 +310,31 @@ namespace MusicPlayer
             storage.setSetting(Constants.SHUFFLED, cp.shuffled.ToString());
         }
 
-      
+
 
         private void ApplicationBarMenuItemConfig_Click(object sender, EventArgs e)
         {
-            /*
-            MediaPlayer.Stop();
 
-            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
-            menu.Text = (menu.Text.Equals("stop")) ? "don't stop" : "stop";
-        
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString("Imagenes/stopButton.png");
-            
-            openCanvas();
-            worker.RunWorkerAsync();*/
             NavigationService.Navigate(new Uri(Constants.CONFIGSCLASS, UriKind.Relative));
 
-            
-        }
 
-        private void ApplicationBarMenuItemIdle_Click(object sender, EventArgs e)
+        }
+        #endregion
+
+        #region mediaplayer listeners
+        //change the play pause button
+        void MediaPlayer_MediaStateChanged(object sender, EventArgs e)
         {
-            if (PhoneApplicationService.Current.UserIdleDetectionMode == Microsoft.Phone.Shell.IdleDetectionMode.Enabled)
-                PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Disabled;
-            else
-                PhoneApplicationService.Current.UserIdleDetectionMode = Microsoft.Phone.Shell.IdleDetectionMode.Enabled;
-
-            ApplicationBarMenuItem menu = (ApplicationBarMenuItem)sender;
-            menu.Text = (menu.Text.Equals("bloq. Screen")) ? "don't bloq" : "bloq. Screen";
-            string source = (menu.Text.Equals("bloq. Screen")) ? "Imagenes/noscreenOn.png" : "Imagenes/screenOn.png";
-            canvasImage.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(source);
-             openCanvas();
-            worker.RunWorkerAsync();
-         
+            changePlayerState();
         }
+
+        void MediaPlayer_ActiveSongChanged(object sender, EventArgs e)
+        {
+            songChangedFromMPlayer();
+        }
+        #endregion
+
+        #region canvas region
 
         //Notification thread and process
         void worker_RunWorkerCompleted(object sender,
@@ -371,19 +373,10 @@ namespace MusicPlayer
             backgroundCanvas.Visibility = System.Windows.Visibility.Collapsed;
             ApplicationBar.IsMenuEnabled = true;
         }
+        #endregion
 
-        //scroll text method
-        private void initAutoScrolling() {
-            Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
-            this.LongTextBlock.Measure(size);
-            size = this.LongTextBlock.DesiredSize;
 
-            if (size.Width > this.ActualWidth)
-            {
-                this.Scroll.Begin();
-            }
-        }
-
+        #region player buttons
         // al darle al botón atrás
         public void goBack()
         {
@@ -408,7 +401,7 @@ namespace MusicPlayer
           }
           catch (Exception ex)
           {
-              MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+            //  MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
           }
         }
 
@@ -471,32 +464,13 @@ namespace MusicPlayer
            }
            catch (Exception ex)
            {
-               MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+              // MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
            }
         }
 
-        public void updateFromDisabled() {
 
-            if(MediaPlayer.Queue.ActiveSongIndex!=-1)
-            cp.position = MediaPlayer.Queue.ActiveSongIndex;
-            trackListBox.SelectedIndex = cp.position;        
-        }
 
-        public void changeToAllSongsList()
-        {
-            try{
-
-            songListBox.ItemsSource = "";
-            this.fuente = 0;       
-            aTextBlock.Text = "All the songs";
-            aTextBlock.Visibility = System.Windows.Visibility.Visible;  
-            changeSongsListOrigin();            
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
-            }
-        }
+        #endregion
 
         //change the play pause button
         public void changePlayerState()
@@ -532,6 +506,7 @@ namespace MusicPlayer
                 else{
                     cp.position = MediaPlayer.Queue.ActiveSongIndex;                 
             }
+                storage.setSetting(Constants.SONGPOSITION, cp.position.ToString());
                 if (trackListBox.SelectedIndex != cp.position)
                     trackListBox.SelectedIndex = cp.position;
                 //actualizar los campos de texto
@@ -540,7 +515,7 @@ namespace MusicPlayer
             }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
+         //   MessageBox.Show(ex.Message.ToString() + " -->A updateSongsListBoxItem method");
         }
         }
 
@@ -553,6 +528,8 @@ namespace MusicPlayer
                     cp.position = trackListBox.SelectedIndex;
                 else
                     cp.position = 0;
+                storage.setSetting(Constants.SONGPOSITION, cp.position.ToString());
+
                 if (!cp.shuffled)
                 {
                     if (MediaPlayer.Queue.ActiveSongIndex != cp.position)
@@ -574,12 +551,13 @@ namespace MusicPlayer
             }
         }
 
-        //updates the song list from the mediaLibrary
+        
+        //updates the song list and the MediaPlayer from the selected mediaLibrary
         private void updateTheSongsList()
         {
             try
             {
-                MediaPlayer.Play(songCollection);
+                MediaPlayer.Play(songCollection);             
                 MediaPlayer.Stop();
                 trackListBox.ItemsSource = songCollection;
                 cp.longitud = songCollection.Count;
@@ -589,35 +567,69 @@ namespace MusicPlayer
             {
                 MessageBox.Show(ex.Message.ToString() + " -->updateTheSongsList method ");
             }        
-        }      
+        }
 
+        //obtainst the songcollection
+        private void recoverLastPosition() {
+            string listName = storage.getSetting(Constants.SOURCE);
+            if (listName != null)
+            {
+                int pos = 0;
+                switch (listName)
+                {
+                    case Constants.PLAYLISTS:
+                        pos = int.Parse(storage.getSetting(Constants.POSITION));
+                        //obtiene la lista con las canciones de la libreria
+                        songCollection = library.Playlists.ElementAt(pos).Songs;
+
+                        break;
+                    case Constants.ARTISTS:
+                        //cambia la lista
+                        pos = int.Parse(storage.getSetting(Constants.POSITION));
+                        songCollection = library.Artists.ElementAt(pos).Songs;
+                        break;
+                    case Constants.ALBUMS:
+                        //cambia la lista
+                        pos = int.Parse(storage.getSetting(Constants.POSITION));
+                        songCollection = library.Albums.ElementAt(pos).Songs;
+
+                        break;
+                    default:
+                        //obtiene la lista con las canciones de la libreria
+
+                        //cambia la lista
+                        songCollection = library.Songs;
+
+                        break;
+                }
+            }
+        }
+
+       
         //al cambiar a otra lista
         public void changeSongsListOrigin()
         {
-             int index = songListBox.Items.Count;
-            if (songListBox.Items.Count != 0 & songListBox.SelectedIndex == -1)
-                songListBox.SelectedIndex = 0;
-            string nombre = "";
-            switch (fuente)
+            string listName = storage.getSetting(Constants.SOURCE);
+            switch (listName)
             {
-                case 1:
+                case Constants.PLAYLISTS:
                     //obtiene la lista con las canciones de la libreria
-                    songCollection = playlists.ElementAt(songListBox.SelectedIndex).Songs;
-                    nombre = playlists.ElementAt(songListBox.SelectedIndex).Name;
+                    songCollection = playlists.ElementAt(playListBox.SelectedIndex).Songs;
+                    //nombre = playlists.ElementAt(songListBox.SelectedIndex).Name;
                     songsList = songCollection.ToList<Song>();
                     break;
-                case 2:
+                case Constants.ARTISTS:
                     //cambia la lista
 
-                    songCollection = artistlists.ElementAt(songListBox.SelectedIndex).Songs;
-                    nombre = artistlists.ElementAt(songListBox.SelectedIndex).Name;
+                    songCollection = artistlists.ElementAt(artistsListBox.SelectedIndex).Songs;
+                    //nombre = artistlists.ElementAt(songListBox.SelectedIndex).Name;
                     songsList = songCollection.ToList<Song>();
                     break;
-                case 3:
+                case Constants.ALBUMS:
                     //cambia la lista
 
-                    songCollection = albumelists.ElementAt(songListBox.SelectedIndex).Songs;
-                    nombre = albumelists.ElementAt(songListBox.SelectedIndex).Name;
+                    songCollection = albumelists.ElementAt(albumsListBox.SelectedIndex).Songs;
+                    //nombre = albumelists.ElementAt(songListBox.SelectedIndex).Name;
                     songsList = songCollection.ToList<Song>();
                     break;
                 default:
@@ -632,63 +644,15 @@ namespace MusicPlayer
             if (songCollection.Count <= 0)
             {
                 songCollection = library.Songs;
-                MessageBox.Show("No songs found in the list: " + nombre, "Sorry!", MessageBoxButton.OK);
+                MessageBox.Show("No songs found in the list: " + storage.getSetting(Constants.LISTNAME), "Sorry!", MessageBoxButton.OK);
             }
             else
             {
-                updateTheSongsList();
-               
-                if (trackListBox.Items.Count > 0)
-                {
-                    cp.position = 0;
-                    UpdateCurrentSongInformation();
-                }                  
+                updateTheSongsList();            
+             
             }
         }
-        //updates the lists from the mediaLibrary
-        private void updateListForCategory(int origin)
-        {
-            this.fuente = origin;
-            switch (fuente)
-            {
-                case 1:
-
-                    playlists = library.Playlists;
-                    songListBox.ItemsSource = playlists;
-                    artistlists = null;
-                    albumelists = null;
-                    aTextBlock.Text = "play lists:";
-                    break;
-                case 2:
-                    artistlists = library.Artists;
-                    songListBox.ItemsSource = artistlists;
-                    playlists = null;
-                    albumelists = null;
-                    aTextBlock.Text = "artists:";
-                    break;
-                case 3:
-                    albumelists = library.Albums;
-                    songListBox.ItemsSource = albumelists;
-                    playlists = null;
-                    artistlists = null;
-                    aTextBlock.Text = "albums";
-                    break;
-                default:
-                    playlists = null;
-                    artistlists = null;
-                    albumelists = null;
-                    changeToAllSongsList();
-                    break;
-            }
-            if (!(songListBox.Items.Count > 0))
-            {
-                aTextBlock.Text = "No playlists available";
-                aTextBlock.Visibility = System.Windows.Visibility.Visible;
-                changeToAllSongsList();
-            }
-            updateTheSongsList();
-        }
-
+        
         //update the actual song meta data
         private void UpdateCurrentSongInformation()
         {    
@@ -701,8 +665,8 @@ namespace MusicPlayer
                 song = songCollection.ElementAt(cp.position);  
      
                 LongTextBlock.Text = "NAME:   "+song.Name + "   ARTIST:   "+song.Artist.Name + "    ALBUM:    "+song.Album.Name ;
-                if (trackListBox.SelectedIndex != cp.position)
-                    trackListBox.SelectedIndex = cp.position;
+            //    if (trackListBox.SelectedIndex != cp.position)
+             //       trackListBox.SelectedIndex = cp.position;
                 String horas=(song.Duration.Hours.ToString().Length==1)?("0"+song.Duration.Hours.ToString()):song.Duration.Hours.ToString() ;
                 String minutos = (song.Duration.Minutes.ToString().Length == 1) ? ("0" + song.Duration.Minutes.ToString()) : song.Duration.Minutes.ToString(); ;
                 String secundos = (song.Duration.Seconds.ToString().Length == 1) ? ("0" + song.Duration.Seconds.ToString()) : song.Duration.Seconds.ToString(); ;
@@ -712,6 +676,18 @@ namespace MusicPlayer
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message.ToString() + " -->UpdateCurrentSongInformation &" + cp.position);
+            }
+        }
+        //scroll text method
+        private void initAutoScrolling()
+        {
+            Size size = new Size(double.PositiveInfinity, double.PositiveInfinity);
+            this.LongTextBlock.Measure(size);
+            size = this.LongTextBlock.DesiredSize;
+
+            if (size.Width > this.ActualWidth)
+            {
+                this.Scroll.Begin();
             }
         }
 

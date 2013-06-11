@@ -23,7 +23,7 @@ namespace  MusicPlayer
         
         public const String LISTNAME = "listname";
         public const String POSITION = "position";
-
+        public const String SONGPOSITION = "songPosition";
 
         public static string CLOSE = "closeOnExit";
         public static string REMEMBER="rememberLastSong";
